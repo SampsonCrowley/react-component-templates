@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pages - NotFound is snapshotable 1`] = `
+<section>
+  <header>
+    <h1>
+      Page Not Found!
+    </h1>
+  </header>
+  <p>
+    Sorry, we couldn't locate the page you are looking for.
+  </p>
+  <p>
+    <a
+      href="/"
+      onClick={[Function]}
+    >
+      Click Here to Return to the Home Page
+    </a>
+  </p>
+  <div
+    className="la-ball-atom la-vw-half la-vh-half"
+    style={
+      Object {
+        "color": "#00F",
+        "margin": "25vh auto",
+        "marginLeft": "auto",
+        "marginRight": "auto",
+      }
+    }
+  >
+    <div />
+    <div />
+    <div />
+    <div />
+  </div>
+</section>
+`;

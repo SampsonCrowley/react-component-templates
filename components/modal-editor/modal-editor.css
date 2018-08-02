@@ -1,0 +1,79 @@
+.modal-editor {
+  display: block;
+  position: fixed;
+  height: 0;
+  width: 0;
+  transition: all 0.2s ease-in-out;
+  padding: 0.5rem 1rem;
+  overflow: hidden;
+  z-index: 10000;
+  font-size: 1rem;
+}
+.modal-editor ul.product-list {
+  line-height: 1;
+  margin: 0;
+  font-size: 1.25rem;
+}
+.modal-editor ul.product-list.numbered {
+  margin-left: 1rem;
+  list-style: decimal;
+  font-size: 0.75rem;
+}
+.modal-editor ul.product-list.numbered li {
+  margin: 0;
+}
+.modal-editor ul.product-list.numbered li:before {
+  content: '';
+}
+.modal-editor ul.product-list li {
+  margin: 0;
+}
+.modal-editor ul.product-list li:before {
+  content: '- ';
+}
+.modal-editor section {
+  background: #fff;
+  border-radius: 1rem;
+  position: relative;
+}
+.modal-editor section .overflow-y {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  height: 100%;
+  height: calc(100% - 4rem);
+  overflow-y: auto;
+}
+.modal-editor section.package-wrapper {
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  overflow: hidden;
+}
+.modal-editor section.package-option {
+  background: #ccc;
+  min-height: 500px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.modal-editor section.package-option h3 {
+  border-bottom: 1px solid #fff;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+.modal-editor div.package-option {
+  border-radius: 1rem;
+  position: relative;
+  background: #ccc;
+  min-height: 500px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.modal-editor.open {
+  top: 50vh;
+  left: 50vw;
+  height: 100vh;
+  width: 100vw;
+  transform: translate(-50%, -50%);
+}

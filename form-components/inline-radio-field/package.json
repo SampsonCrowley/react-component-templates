@@ -1,0 +1,6 @@
+{
+  "name": "InlineRadioField",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./inline-radio-field.jsx"
+}

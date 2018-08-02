@@ -1,0 +1,6 @@
+{
+  "name": "LazyImage",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./lazy-image.jsx"
+}

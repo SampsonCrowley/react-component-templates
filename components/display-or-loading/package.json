@@ -1,0 +1,6 @@
+{
+  "name": "DisplayOrLoading",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./display-or-loading.jsx"
+}

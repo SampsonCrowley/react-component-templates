@@ -1,0 +1,57 @@
+{
+  "name": "react-component-templates",
+  "moduleName": "ReactComponentTemplates",
+  "version": "1.5.0",
+  "description": "Default React Components to use across apps",
+  "main": "dist/react-component-templates.js",
+  "module": "index.js",
+  "scripts": {
+  },
+  "files": [
+    "assets",
+    "client",
+    "components",
+    "contexts",
+    "form-components",
+    "helpers",
+    "pages",
+    "polyfills",
+    "scripts",
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SampsonCrowley/react-component-templates.git"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "library",
+    "templates"
+  ],
+  "author": "SampsonCrowley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SampsonCrowley/react-component-templates/issues"
+  },
+  "homepage": "https://github.com/SampsonCrowley/react-component-templates#readme",
+  "peerDependencies": {
+    "autoprefixer": "8.6.1",
+    "autoprefixer-stylus": "^0.14.0",
+    "brotli": "^1.3.2",
+    "focus-within": "^2.0.0",
+    "react-component-templates": "^1.0.9",
+    "load-awesome-relative": "^0.0.3",
+    "moment": "^2.22.2",
+    "nib": "^1.1.2",
+    "node-glob": "^1.2.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4",
+    "react-select-fast-filter-options": "^0.2.3",
+    "react-virtualized-select": "^3.1.3",
+    "stylus": "^0.54.5"
+  }
+}

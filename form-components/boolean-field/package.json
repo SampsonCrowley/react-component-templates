@@ -1,0 +1,6 @@
+{
+  "name": "BooleanField",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./boolean-field.jsx"
+}

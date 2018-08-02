@@ -1,0 +1,6 @@
+{
+  "name": "Eject",
+  "version": "0.0.0",
+  "private": false,
+  "main": "./eject.js"
+}
