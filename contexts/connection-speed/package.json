@@ -1,6 +1,0 @@
-{
-  "name": "InternetContext",
-  "version": "0.0.1",
-  "private": true,
-  "main": "./connection-speed.jsx"
-}
