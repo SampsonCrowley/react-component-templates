@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import NotFound from './not-found';
+import NotFound from '../not-found';
 
 describe('Pages - NotFound', () => {
   const div = document.createElement('div');
@@ -34,7 +34,7 @@ describe('Pages - NotFound', () => {
 
   it('appologises for their mistake', () => {
     const rendered = createNotFound()
-    const paragraph = rendered.querySelector('header + p')
+    const paragraph = rendered.querySelector('main > p:first-child')
     expect(paragraph).toBeTruthy()
     expect(paragraph.innerHTML)
       .toBe("Sorry, we couldn't locate the page you are looking for.")

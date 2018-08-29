@@ -3,6 +3,27 @@ import PropTypes from 'prop-types'
 
 import filterKeys from '../../helpers/filter-keys'
 
+const emailPattern = '^[^@\\s\\;\\.\\/\\\\]+(\\.[^@\\s\\;\\.\\/\\\\]+)*@[^@\\s\\;\\.\\/\\\\]+(\\.[^@\\s\\;\\.\\/\\\\]+)*\\.[^@\\s\\;\\.\\/\\\\]+$',
+      emailRegex = new RegExp(emailPattern),
+      phonePattern = '^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4}',
+      phoneRegex = new RegExp(phonePattern),
+      phoneFormat = (val) => {
+        val = `${val}`.replace(/[^0-9]/g, '')
+        if(val.length) {
+          if(val.length > 6) val = val.slice(0, 6) + '-' + val.slice(6)
+          if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
+        }
+        return val
+      }
+
+export {
+  emailPattern,
+  emailRegex,
+  phonePattern,
+  phoneRegex,
+  phoneFormat,
+}
+
 export default class TextField extends Component {
   /**
    * @type {object}
@@ -11,6 +32,9 @@ export default class TextField extends Component {
    * @property {String} name - Input Name
    * @property {Function} onChange - Run on input change
    * @property {String} type - Input type
+   * @property {Boolean} useEmailFormat - Strict Pattern parse email
+   * @property {Boolean} usePhoneFormat - Automagically formats phone number and adds pattern checking
+   * @property {String} badFormatMessage - Message to add to tooltip on bad format
    * @property {String|Element} feedback - Feedback to show on Input focus
    * @property {String|Boolean|Number} value - Input value
    * @property {(RegExp|Function)} validator - Validate input aginst regex or function
@@ -24,6 +48,9 @@ export default class TextField extends Component {
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func,
     type: PropTypes.string,
+    useEmailFormat: PropTypes.bool,
+    usePhoneFormat: PropTypes.bool,
+    badFormatMessage: PropTypes.string,
     feedback: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.node
@@ -44,6 +71,12 @@ export default class TextField extends Component {
       const validator = props.validator
       props.pattern = validator
       delete props.validator
+    } else if(props.useEmailFormat || props.usePhoneFormat) {
+      const regexToUse = props.useEmailFormat ? emailRegex : phoneRegex,
+            badMessage = props.badFormatMessage || `Invalid ${props.useEmailFormat ? 'Email' : 'Phone'}`
+
+      props.pattern = props.useEmailFormat ? emailPattern : phonePattern
+      props.validator = (ev) => regexToUse.test(ev.target.value) ? '' : badMessage
     }
     super(props)
 
@@ -88,7 +121,7 @@ export default class TextField extends Component {
   }
 
   render(){
-    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, ['onChange', 'validator', 'caretIgnore'])
+    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, ['onChange', 'validator', 'caretIgnore', 'useEmailFormat', 'usePhoneFormat', 'badFormatMessage'])
     return (
       <Fragment>
         <label key={`${id}.label`} htmlFor={id}>{label}</label>

@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Default React Components to use across apps",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,6 @@
     "url": "https://github.com/SampsonCrowley/react-component-templates/issues"
   },
   "homepage": "https://github.com/SampsonCrowley/react-component-templates#readme",
-  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "autoprefixer": "7.1.6",
@@ -79,6 +78,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "react-select-fast-filter-options": "^0.2.3",
+    "react-test-renderer": "^16.4.2",
     "react-virtualized-select": "^3.1.3",
     "style-loader": "0.19.0",
     "stylus": "^0.54.5",
