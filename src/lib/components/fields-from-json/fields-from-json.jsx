@@ -21,7 +21,7 @@ export default class FieldsFromJson extends Component {
     DisplayOrLoading,
     Gallery,
     InlineRadioField,
-    JsonForm,
+    FieldsFromJson,
     LazyImage,
     Link,
     ModalEditor,
