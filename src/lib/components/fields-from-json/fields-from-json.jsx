@@ -29,7 +29,10 @@ export default class FieldsFromJson extends Component {
     TextField,
   }
 
-  tagNames = () => this.constructor.tagNames
+  constructor(props) {
+    super(props)
+    this.tagNames = this.constructor.tagNames
+  }
 
   renderComponent = (name, { fields, wrapperClass: className, ...props}) => {
     const TagName = this.tagNames[name] || name || 'div'
