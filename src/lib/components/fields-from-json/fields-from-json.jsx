@@ -26,6 +26,7 @@ export default class FieldsFromJson extends Component {
     Link,
     ModalEditor,
     PasswordField,
+    SelectField,
     TextField,
   }
 

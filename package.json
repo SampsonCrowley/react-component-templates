@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "2.2.5",
+  "version": "2.2.92",
   "description": "Default React Components to use across apps",
   "main": "index.js",
   "scripts": {

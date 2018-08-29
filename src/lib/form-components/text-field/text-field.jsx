@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import filterKeys from '../../helpers/filter-keys'
 
-const emailPattern = '^[^@\\s\\;\\.\\/\\\\]+(\\.[^@\\s\\;\\.\\/\\\\]+)*@[^@\\s\\;\\.\\/\\\\]+(\\.[^@\\s\\;\\.\\/\\\\]+)*\\.[^@\\s\\;\\.\\/\\\\]+$',
+const emailPattern = '^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$',
       emailRegex = new RegExp(emailPattern),
       phonePattern = '^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4}',
       phoneRegex = new RegExp(phonePattern),
@@ -66,25 +66,41 @@ export default class TextField extends Component {
     ])
   }
 
-  constructor(props) {
-    if(props.validator instanceof RegExp) {
-      const validator = props.validator
-      props.pattern = validator
-      delete props.validator
-    } else if(props.useEmailFormat || props.usePhoneFormat) {
+  static getDerivedStateFromProps(props, prevState) {
+    if(props.useEmailFormat || props.usePhoneFormat) {
       const regexToUse = props.useEmailFormat ? emailRegex : phoneRegex,
-            badMessage = props.badFormatMessage || `Invalid ${props.useEmailFormat ? 'Email' : 'Phone'}`
+            badMessage = props.badFormatMessage || `Invalid ${props.useEmailFormat ? 'Email' : 'Phone'} Format`
 
-      props.pattern = props.useEmailFormat ? emailPattern : phonePattern
-      props.validator = (ev) => regexToUse.test(ev.target.value) ? '' : badMessage
+      return {
+        pattern: (props.useEmailFormat ? emailPattern : phonePattern),
+        validator: (ev) => regexToUse.test(ev.target.value) ? '' : badMessage
+      }
+    } else if(props.validator instanceof RegExp) {
+      return {
+        validator: void(0),
+        pattern: props.validator
+      }
+    } else {
+      return {
+        validator: props.validator,
+        pattern: props.pattern
+      }
     }
+
+  }
+
+  constructor(props) {
     super(props)
+
+    this.state = {}
 
     this._rawStr = '';
     this._caretPosition = 0;
   }
 
-  componentDidUpdate ({ value, caretIgnore }) {
+  componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useEmailFormat }) {
+    if(usePhoneFormat) caretIgnore = caretIgnore || '-'
+
     if (this._caretPosition && (this.props.value !== value)) {
       let str, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
 
@@ -104,7 +120,11 @@ export default class TextField extends Component {
 
       if (index !== -1) {
         try {
+          const ogType = this.refs.input.type || 'text',
+                needsChange = !(/text|search|password|tel|url/.test(ogType))
+          if(needsChange) this.refs.input.type = 'text'
           this.refs.input.selectionStart = this.refs.input.selectionEnd = index;
+          if(needsChange) this.refs.input.type = ogType
         } catch(err) {
           console.log(err)
         }
@@ -113,15 +133,40 @@ export default class TextField extends Component {
   }
 
   onChange(ev) {
-    this._rawStr = String(ev.target.value);
     this._caretPosition = Number(ev.target.selectionEnd);
+    if(this.props.useEmailFormat) {
+      const newVal = String(ev.target.value || '').toLowerCase(),
+            oldVal = String(this.props.value || '').toLowerCase()
+      if(newVal && oldVal) {
+        if(Math.abs(newVal.length - oldVal.length) === 1) {
+          for(let i = 0; i < Math.max(newVal.length, oldVal.length); i++){
+            if(newVal[i] !== oldVal[i]) {
+              if(i + 1 < newVal.length) {
+                this._caretPosition = newVal[i] === oldVal[i+1] ? i : i + 1
+              } else {
+                this._caretPosition = newVal.length
+              }
+              break
+            }
+          }
+        }
+      }
+      ev.target.value = newVal
+    }
+
+    this._rawStr = String(ev.target.value);
+
+    if(this.props.usePhoneFormat) ev.target.value = phoneFormat(ev.target.value)
 
     if(this.props.onChange) this.props.onChange(ev)
-    if(this.props.validator) ev.target.setCustomValidity(this.props.validator(ev))
+    if(this.state.validator) ev.target.setCustomValidity(this.state.validator(ev))
   }
 
   render(){
-    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, ['onChange', 'validator', 'caretIgnore', 'useEmailFormat', 'usePhoneFormat', 'badFormatMessage'])
+    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, ['onChange', 'validator', 'caretIgnore', 'useEmailFormat', 'usePhoneFormat', 'badFormatMessage', 'pattern'])
+
+    if(this.state.pattern) props.pattern = this.state.pattern
+
     return (
       <Fragment>
         <label key={`${id}.label`} htmlFor={id}>{label}</label>
