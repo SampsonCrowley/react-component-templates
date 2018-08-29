@@ -135,22 +135,22 @@ export default class TextField extends Component {
   onChange(ev) {
     this._caretPosition = Number(ev.target.selectionEnd);
     if(this.props.useEmailFormat) {
-      const newVal = String(ev.target.value || '').toLowerCase(),
-            oldVal = String(this.props.value || '').toLowerCase()
-      if(newVal && oldVal) {
-        if(Math.abs(newVal.length - oldVal.length) === 1) {
-          for(let i = 0; i < Math.max(newVal.length, oldVal.length); i++){
-            if(newVal[i] !== oldVal[i]) {
-              if(i + 1 < newVal.length) {
-                this._caretPosition = newVal[i] === oldVal[i+1] ? i : i + 1
-              } else {
-                this._caretPosition = newVal.length
-              }
-              break
-            }
-          }
-        }
-      }
+      const newVal = String(ev.target.value || '').toLowerCase()
+            // oldVal = String(this.props.value || '').toLowerCase()
+      // if(newVal && oldVal) {
+      //   if(Math.abs(newVal.length - oldVal.length) === 1) {
+      //     for(let i = 0; i < Math.max(newVal.length, oldVal.length); i++){
+      //       if(newVal[i] !== oldVal[i]) {
+      //         if(i + 1 < newVal.length) {
+      //           this._caretPosition = newVal[i] === oldVal[i+1] ? i : i + 1
+      //         } else {
+      //           this._caretPosition = newVal.length
+      //         }
+      //         break
+      //       }
+      //     }
+      //   }
+      // }
       ev.target.value = newVal
     }
 
