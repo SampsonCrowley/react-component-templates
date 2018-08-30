@@ -56,8 +56,9 @@ export default class LazyImage extends Component {
 
   render() {
     const { placeholder = Logo, src, useLoader, loaderProps = {}, alt = 'Lazy-Loaded image', ...props } = this.props || {}
-    console.log(props)
+
     const {loaded} = this.state
+
     if(!loaded && useLoader) {
       return (
         <JellyBox

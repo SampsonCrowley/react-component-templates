@@ -54,32 +54,64 @@ export default class FieldsFromJson extends Component {
   }
 
   loopFields = (fields) => {
-    const form = this.props.form
+    const form = this.props.form,
+          changeFunction = this.props.onChange,
+          confirmationChangeFunction = this.props.onConfirmationChange,
+          blurFunction = this.props.onBlur,
+          keyUpFunction = this.props.onKeyUp,
+          keyDownFunction = this.props.onKeyDown
+
     return fields.map(({
       field,
       name,
       id,
       className,
+      onChange = false,
+      onConfirmationChange = false,
+      onBlur = false,
+      onKeyUp = false,
+      onKeyDown = false,
+      toggle = false,
+      delegatedChange = false,
+      formatter = false,
       ...props
-    }, key) => (
-      this.renderComponent(field, name ? {
-        name: `${form}${name.split('.').map((v) => `[${v}]`).join('')}`,
-        key,
-        id: id || `${form}_${name.split('.').join('_')}`,
-        className: className === undefined ? 'form-control' : className,
-        ...props
-      } : {
-        key,
-        id,
-        className,
-        ...props
-      })
-    ))
+    }, key) => {
+      const functionalProps = {}
+      if(name) {
+        if(onBlur) functionalProps['onBlur'] = (ev) => ((blurFunction || onBlur)(ev, name, formatter))
+        if(onChange) functionalProps['onChange'] = (ev, value) => {
+          if(!ev && value) return ((changeFunction || onChange)(ev, name, value))
+          if(!(typeof ev === 'object')) return ((changeFunction || onChange)(false, name, ev))
+          return ((changeFunction || onChange)(ev, name, formatter))
+        }
+        if(onConfirmationChange) functionalProps['onConfirmationChange'] = (ev) => ((confirmationChangeFunction || onConfirmationChange)(ev, name.replace('password', 'password_confirmation'), formatter))
+        if(onKeyUp) functionalProps['onKeyUp'] = (ev) => ((keyUpFunction || onKeyUp)(ev, name, formatter))
+        if(onKeyDown) functionalProps['onKeyDown'] = (ev) => ((keyDownFunction || onKeyDown)(ev, name, formatter))
+        if(delegatedChange) functionalProps['onChange'] = changeFunction || onChange
+        if(toggle) functionalProps['toggle'] = (ev) => onChange(false, name, !props.value)
+      }
+
+
+      return (
+        this.renderComponent(field, name ? {
+          name: `${form}${name.split('.').map((v) => `[${v}]`).join('')}`,
+          key,
+          id: id || `${form}_${name.split('.').join('_')}`,
+          className: className === undefined ? 'form-control' : className,
+          ...functionalProps,
+          ...props
+        } : {
+          key,
+          id,
+          className,
+          ...props
+        })
+      )
+    })
   }
 
   render() {
     const { form = '', fields = [] } = this.props
-    console.log(form, fields)
 
     return (
       <Fragment>

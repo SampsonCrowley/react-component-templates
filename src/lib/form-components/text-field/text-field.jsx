@@ -23,8 +23,15 @@ export {
   phoneRegex,
   phoneFormat,
 }
-
+/**
+ * input tag with built in helper functions and easier validation
+ */
 export default class TextField extends Component {
+  /**
+   * @type {Array}
+   */
+  static specialKeys = Object.freeze(["badFormatMessage", "caretIgnore", "onChange", "pattern", "looseCasing", "useEmailFormat", "usePhoneFormat", "validator"])
+
   /**
    * @type {object}
    * @property {String|Element} label - Input Label
@@ -46,14 +53,19 @@ export default class TextField extends Component {
     ]),
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    onBlur: PropTypes.func,
     onChange: PropTypes.func,
     type: PropTypes.string,
     useEmailFormat: PropTypes.bool,
     usePhoneFormat: PropTypes.bool,
     badFormatMessage: PropTypes.string,
+    looseCasing: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.bool,
+    ]),
     feedback: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.node
+      PropTypes.node,
     ]),
     value: PropTypes.oneOfType([
       PropTypes.string,
@@ -62,10 +74,16 @@ export default class TextField extends Component {
     ]),
     validator: PropTypes.oneOfType([
       PropTypes.instanceOf(RegExp),
-      PropTypes.func
+      PropTypes.func,
     ])
   }
 
+  /**
+   * Get correct pattern and validator on prop change
+   * @type {Function}
+   * @param {object} props - next props
+   * @param {object} prevState - previous state
+   */
   static getDerivedStateFromProps(props, prevState) {
     if(props.useEmailFormat || props.usePhoneFormat) {
       const regexToUse = props.useEmailFormat ? emailRegex : phoneRegex,
@@ -94,28 +112,45 @@ export default class TextField extends Component {
 
     this.state = {}
 
+    this._specialKeys = this.constructor.specialKeys
     this._rawStr = '';
     this._caretPosition = 0;
   }
 
-  componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useEmailFormat }) {
-    if(usePhoneFormat) caretIgnore = caretIgnore || '-'
+  /**
+   * Make sure Caret Position is correct on modified input values
+   * @type {Function}
+   * @param {object} prevProps - used to check for ignored characters
+   */
+  componentDidUpdate ({ value, caretIgnore, usePhoneFormat, looseCasing }) {
+    if(usePhoneFormat) caretIgnore = '-'
 
     if (this._caretPosition && (this.props.value !== value)) {
-      let str, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
+      let str, val, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
 
       str = this._rawStr.substr(0, this._caretPosition);
+      val = String(this.props.value)
+
+      if(looseCasing) {
+        if(typeof looseCasing === 'string') {
+          val = val[looseCasing]()
+          str = str[looseCasing]()
+        } else {
+          val = val.toLowerCase()
+          str = str.toLowerCase()
+        }
+      }
 
       if(caretStr) {
         let regex = new RegExp(caretStr, 'g'),
             splitReg = new RegExp(str.replace(regex, '').split('').join(`(${caretStr})?`)),
             matches = str.match(regex) || [],
-            effectiveString = String((String(this.props.value).match(splitReg) || [])[0]),
+            effectiveString = String((val.match(splitReg) || [])[0]),
             effectiveMatches = (effectiveString.match(regex) || []).length
 
-        index = String(this.props.value).indexOf(effectiveString) + this._caretPosition + (effectiveMatches - matches.length);
+        index = val.indexOf(effectiveString) + this._caretPosition + (effectiveMatches - matches.length);
       } else {
-        index = String(this.props.value).indexOf(str) + this._caretPosition;
+        index = val.indexOf(str) + this._caretPosition;
       }
 
       if (index !== -1) {
@@ -132,27 +167,14 @@ export default class TextField extends Component {
     }
   }
 
+  /**
+   * Set Caret Position where applicable, format phone numbers and call onChange
+   * for props
+   * @type {Function}
+   * @param {event} ev - synthetic change event
+   */
   onChange(ev) {
     this._caretPosition = Number(ev.target.selectionEnd);
-    if(this.props.useEmailFormat) {
-      const newVal = String(ev.target.value || '').toLowerCase()
-            // oldVal = String(this.props.value || '').toLowerCase()
-      // if(newVal && oldVal) {
-      //   if(Math.abs(newVal.length - oldVal.length) === 1) {
-      //     for(let i = 0; i < Math.max(newVal.length, oldVal.length); i++){
-      //       if(newVal[i] !== oldVal[i]) {
-      //         if(i + 1 < newVal.length) {
-      //           this._caretPosition = newVal[i] === oldVal[i+1] ? i : i + 1
-      //         } else {
-      //           this._caretPosition = newVal.length
-      //         }
-      //         break
-      //       }
-      //     }
-      //   }
-      // }
-      ev.target.value = newVal
-    }
 
     this._rawStr = String(ev.target.value);
 
@@ -162,10 +184,25 @@ export default class TextField extends Component {
     if(this.state.validator) ev.target.setCustomValidity(this.state.validator(ev))
   }
 
+  /**
+   * format emails on blur since selectionRange is not applicable
+   * call props.onBlur if set
+   * @type {Function}
+   * @param {event} ev - synthetic change event
+   */
+  onBlur(ev) {
+    if(this.props.useEmailFormat) {
+      ev.target.value = String(ev.target.value || '').toLowerCase()
+      this.onChange(ev)
+    }
+    if(this.props.onBlur) this.props.onBlur(ev)
+  }
+
   render(){
-    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, ['onChange', 'validator', 'caretIgnore', 'useEmailFormat', 'usePhoneFormat', 'badFormatMessage', 'pattern'])
+    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
+    if(this.props.useEmailFormat) props.onBlur = (ev) => this.onBlur(ev)
 
     return (
       <Fragment>

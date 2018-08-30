@@ -38,7 +38,6 @@ export default class SelectField extends Component {
       options: mappedOptions,
       ...this.props.filterOptions
     })
-    console.log(filterOptions)
     this.setState({
       filterOptions: filterOptions,
       options: mappedOptions,
@@ -74,17 +73,16 @@ export default class SelectField extends Component {
 
   findOption = (value, clearIfInvalid = false) => {
     let found = this.state.quickFind[`${value}`.toUpperCase()];
-    console.log(found, value, this.state.quickFind, clearIfInvalid)
     if((found !== null) && (found !== undefined) && (found = this.state.options[found])) {
       this.setState({
         autoCompleteValue: found[this.props.autoCompleteKey || 'label']
       })
-      this.props.onChange(found)
+      this.props.onChange(false, found)
     } else if (clearIfInvalid) {
       this.setState({
         autoCompleteValue: ''
       })
-      this.props.onChange({})
+      this.props.onChange(false, {})
     } else {
       this.setState({
         autoCompleteValue: value || ''
@@ -97,13 +95,11 @@ export default class SelectField extends Component {
     this.setState({
       autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || ''
     })
-    this.props.onChange(value)
+    this.props.onChange(false, value)
   }
 
   render() {
     const {label = '', name, id = name, feedback = '', value, viewProps = {}, ...props} = filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
-
-    console.log(props, this.state)
 
     return (
       <Fragment>

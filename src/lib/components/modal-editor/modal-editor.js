@@ -35,7 +35,7 @@ export default class ModalEditor extends Component {
    */
   render() {
     const { onClose, changed = false, heading = 'Down Under Sports', loading = false, children } = this.props;
-    console.log(children)
+
     return (
       <div className={`modal-editor ${this.state.active ? 'open' : 'closed'}`}>
         <section className='container-fluid package-wrapper'>

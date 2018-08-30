@@ -59,11 +59,11 @@ export default class PasswordField extends Component {
 
     if(confirmed){
       this.focusedEl = 'confirmation';
-      if(this.props.onConfirmationChange) this.props.onConfirmationChange(this.refs.confirmation.value)
+      if(this.props.onConfirmationChange) this.props.onConfirmationChange(ev)
     } else {
       this.focusedEl = 'password';
       if(this.props.onChange) {
-        this.props.onChange(this.refs.password.value)
+        this.props.onChange(ev)
       }
     }
 

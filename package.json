@@ -1,17 +1,18 @@
 {
   "name": "react-component-templates",
-  "version": "2.2.93",
+  "version": "3.0.0",
   "description": "Default React Components to use across apps",
   "main": "index.js",
   "scripts": {
     "start": "yarn styles && node scripts/start.js",
     "build": "yarn styles && node scripts/build.js && cp package.json build/package.json",
     "demo": "yarn styles && node scripts/demo.js",
-    "release": "yarn run build && npm --cwd build publish",
+    "release": "yarn run build && npm publish build",
     "styles": "node scripts/create-styles run",
     "styles:watch": "shopt -s globstar && stylus -I src -u nib -w ./src/**/*.styl",
     "styles:watch:scripted": "node scripts/create-styles watch",
-    "test": "yarn styles && node scripts/test.js --env=jsdom"
+    "test": "yarn styles && node scripts/test.js --env=jsdom",
+    "login": "npm adduser"
   },
   "files": [
     "*"

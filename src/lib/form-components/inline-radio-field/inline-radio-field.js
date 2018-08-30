@@ -83,7 +83,7 @@ export default class InlineRadioField extends Component {
                     onClick={(e) => {
                       e.stopPropagation()
                       e.preventDefault()
-                      onChange(value)
+                      onChange(false, value)
                     }}
                   >
                     <div className="input-group-prepend">

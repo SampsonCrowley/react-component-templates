@@ -5,7 +5,6 @@ import LazyImage from '../../components/lazy-image'
 
 export default class Gallery extends Component {
   render() {
-    console.log(LazyImage)
     return (<span></span>)
   }
 }
