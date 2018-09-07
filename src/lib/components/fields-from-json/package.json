@@ -2,5 +2,5 @@
   "name": "FieldsFromJson",
   "version": "0.0.0",
   "private": true,
-  "main": "./fields-from-json.jsx"
+  "main": "./fields-from-json.js"
 }

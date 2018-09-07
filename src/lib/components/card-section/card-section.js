@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 export default class CardSection extends Component {
   render() {
     const {
-            label = '', className = '', children = '',
+            label = '', subLabel = '', className = '', children = '',
             contentProps: cProps = {}, headerProps: hProps = {},
             ...props
           } = this.props,
@@ -22,6 +22,17 @@ export default class CardSection extends Component {
               </h3>
             )
           }
+          { subLabel ? (
+            (typeof subLabel === 'string') ? (
+              <h5 dangerouslySetInnerHTML={{__html: subLabel}} />
+            ) : (
+              <h5>
+                <i>
+                  {subLabel}
+                </i>
+              </h5>
+            )
+          ) : '' }
         </header>
         <main className={`card-body ${contentClassName}`} {...contentProps}>
           {children}

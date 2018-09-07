@@ -2,5 +2,5 @@
   "name": "TextField",
   "version": "1.0.0",
   "private": true,
-  "module": "./text-field.jsx"
+  "module": "./text-field.js"
 }

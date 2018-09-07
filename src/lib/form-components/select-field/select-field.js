@@ -126,7 +126,7 @@ export default class SelectField extends Component {
               key={`${id}.input`}
               name={name}
               id={id}
-              value={value}
+              value={typeof value === 'object' ? value.value : value}
               options={this.state.options}
               filterOptions={this.state.filterOptions}
               inputProps={{

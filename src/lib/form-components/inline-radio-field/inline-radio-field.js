@@ -48,10 +48,6 @@ export default class InlineRadioField extends Component {
     )
   }
 
-  onChange(ev){
-    console.log(ev)
-  }
-
   render(){
     const {
             label = '', name, id = name,
@@ -83,7 +79,7 @@ export default class InlineRadioField extends Component {
                     onClick={(e) => {
                       e.stopPropagation()
                       e.preventDefault()
-                      onChange(false, value)
+                      onChange(value)
                     }}
                   >
                     <div className="input-group-prepend">
@@ -93,6 +89,7 @@ export default class InlineRadioField extends Component {
                         value={value}
                         checked={selectedVal === value}
                         className='indirect-box'
+                        onChange={function(){}}
                         {...props}
                       />
                       <div

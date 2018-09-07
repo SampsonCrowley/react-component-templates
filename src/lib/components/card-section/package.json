@@ -1,6 +1,6 @@
 {
   "name": "CardSection",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "main": "./card-section.jsx"
+  "main": "./card-section.js"
 }

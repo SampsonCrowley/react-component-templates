@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Components - CardSection is snapshotable 1`] = `
+<section
+  className="card text-default "
+  to="/"
+>
+  <header
+    className="text-center card-header "
+  >
+    <h3
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "",
+        }
+      }
+    />
+    
+  </header>
+  <main
+    className="card-body "
+  >
+    Test
+  </main>
+</section>
+`;
