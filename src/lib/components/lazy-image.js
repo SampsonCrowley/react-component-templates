@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import JellyBox from 'load-awesome-react-components/dist/square/jelly-box'
 import 'load-awesome-react-components/dist/square/jelly-box.css'
 
-import Logo from '../../assets/images/logo.svg'
+import Logo from '../assets/images/logo.svg'
 
 export default class LazyImage extends Component {
   static propTypes = {

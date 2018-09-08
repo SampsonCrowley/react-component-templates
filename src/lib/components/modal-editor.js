@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
-import DisplayOrLoading from '../../components/display-or-loading'
+import DisplayOrLoading from './display-or-loading'
 
 import './modal-editor.css'
 

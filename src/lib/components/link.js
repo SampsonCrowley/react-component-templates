@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
-import { Menu } from '../../contexts/menu'
+import { Menu } from '../contexts/menu'
 
 class CloserLink extends Component {
   static propTypes = {
