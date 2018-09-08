@@ -5,9 +5,9 @@ import 'react-select/dist/react-select.css';
 import 'react-virtualized/styles.css'
 import 'react-virtualized-select/styles.css'
 
-import filterKeys from '../../helpers/filter-keys'
+import filterKeys from '../helpers/filter-keys'
 
-import TextField from '../../form-components/text-field'
+import TextField from './text-field'
 
 export default class SelectField extends Component {
   constructor(props) {
@@ -99,47 +99,50 @@ export default class SelectField extends Component {
   }
 
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, ...props} = filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
 
-    return (
+    const select = (
+      !this.state.clickedState ? (
+        <TextField
+          key={`${id}.input`}
+          name={name}
+          id={id}
+          value={this.state.autoCompleteValue}
+          onKeyUp={(ev) => {if(ev.keyCode === 9) this.setState({clickedState: true})}}
+          onChange={(ev) => this.setState({autoCompleteValue: ev.target.value})}
+          onBlur={() => this.findOption(this.state.autoCompleteValue, true)}
+          onClick={() => this.setState({clickedState: true})}
+          skipExtras
+          {...viewProps}
+        />
+      ) : (
+        <Select
+          autoFocus={this.state.clickedState}
+          menuIsOpen
+          openOnFocus
+          defaultInputValue={this.state.autoCompleteValue}
+          key={`${id}.input`}
+          name={name}
+          id={id}
+          value={typeof value === 'object' ? value.value : value}
+          options={this.state.options}
+          filterOptions={this.state.filterOptions}
+          inputProps={{
+            ...props,
+            autoComplete: 'nope'
+          }}
+          onChange={this.onChange}
+          onBlur={() => this.setState({clickedState: false})}
+        />
+      )
+    )
+
+    return skipExtras ? select : (
       <Fragment>
         <label key={`${id}.label`} htmlFor={id}>{label}</label>
         {
-          !this.state.clickedState ? (
-            <TextField
-              key={`${id}.input`}
-              name={name}
-              id={id}
-              value={this.state.autoCompleteValue}
-              onKeyUp={(ev) => {if(ev.keyCode === 9) this.setState({clickedState: true})}}
-              onChange={(ev) => this.setState({autoCompleteValue: ev.target.value})}
-              onBlur={() => this.findOption(this.state.autoCompleteValue, true)}
-              onClick={() => this.setState({clickedState: true})}
-              {...viewProps}
-            />
-          ) : (
-            <Select
-              autoFocus={this.state.clickedState}
-              menuIsOpen
-              openOnFocus
-              defaultInputValue={this.state.autoCompleteValue}
-              key={`${id}.input`}
-              name={name}
-              id={id}
-              value={typeof value === 'object' ? value.value : value}
-              options={this.state.options}
-              filterOptions={this.state.filterOptions}
-              inputProps={{
-                ...props,
-                autoComplete: 'nope'
-              }}
-              onChange={this.onChange}
-              onBlur={() => this.setState({clickedState: false})}
-
-            />
-          )
+          select
         }
-
         <small key={`${id}.feedback`} className="form-control-focused">
           {feedback}
         </small>

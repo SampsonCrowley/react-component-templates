@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import { string, node, func, oneOfType, bool, number, arrayOf, shape } from 'prop-types'
 
-import filterKeys from '../../helpers/filter-keys'
+import filterKeys from '../helpers/filter-keys'
 
 export default class InlineRadioField extends Component {
   /**

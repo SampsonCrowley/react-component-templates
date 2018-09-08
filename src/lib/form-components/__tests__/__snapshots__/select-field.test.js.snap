@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Form Components - SelectField is snapshotable 1`] = `
+Array [
+  <label
+    htmlFor="testId"
+>
+    test label
+</label>,
+  <input
+    id="testId"
+    name="testName"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onClick={[Function]}
+    onKeyUp={[Function]}
+    type="text"
+    value=""
+/>,
+  <small
+    className="form-control-focused"
+>
+    test feedback
+</small>,
+]
+`;

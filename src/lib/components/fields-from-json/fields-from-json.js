@@ -74,13 +74,14 @@ export default class FieldsFromJson extends Component {
       toggle = false,
       delegatedChange = false,
       formatter = false,
+      valueKey = false,
       ...props
     }, key) => {
       const functionalProps = {}
       if(name) {
         if(onBlur) functionalProps['onBlur'] = (ev) => ((blurFunction || onBlur)(ev, name, formatter))
         if(onChange) functionalProps['onChange'] = (ev, value) => {
-          if(!ev && value) return ((changeFunction || onChange)(ev, name, value))
+          if(!ev && value) return ((changeFunction || onChange)(ev, name, valueKey ? value[valueKey] : value))
           if(!(typeof ev === 'object')) return ((changeFunction || onChange)(false, name, ev))
           return ((changeFunction || onChange)(ev, name, formatter))
         }

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import PropTypes from 'prop-types'
 
-import filterKeys from '../../helpers/filter-keys'
+import filterKeys from '../helpers/filter-keys'
 
 const emailPattern = '^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$',
       emailRegex = new RegExp(emailPattern),
@@ -199,24 +199,28 @@ export default class TextField extends Component {
   }
 
   render(){
-    const {label = '', name, id = name, type = 'text', feedback = '', value, ...props} = filterKeys(this.props, this._specialKeys)
+    const {label = '', name, id = name, type = 'text', feedback = '', value, skipExtras = false, ...props} = filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
     if(this.props.useEmailFormat) props.onBlur = (ev) => this.onBlur(ev)
 
-    return (
+    const input = (
+      <input
+        key={`${id}.input`}
+        ref="input"
+        name={name}
+        id={id}
+        type={type}
+        value={value}
+        onChange={(ev) => this.onChange(ev)}
+        {...props}
+      />
+    )
+
+    return skipExtras ? input : (
       <Fragment>
         <label key={`${id}.label`} htmlFor={id}>{label}</label>
-        <input
-          ref="input"
-          key={`${id}.input`}
-          name={name}
-          id={id}
-          type={type}
-          value={value}
-          onChange={(ev) => this.onChange(ev)}
-          {...props}
-        />
+        { input }
         <small key={`${id}.feedback`} className="form-control-focused">
           {feedback}
         </small>
