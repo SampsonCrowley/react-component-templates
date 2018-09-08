@@ -112,7 +112,7 @@ export default class FieldsFromJson extends Component {
   }
 
   render() {
-    const { form = '', fields = [] } = this.props
+    const { fields = [] } = this.props
 
     return (
       <Fragment>

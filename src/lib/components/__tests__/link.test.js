@@ -42,6 +42,34 @@ describe('Components - Link', () => {
     ReactDOM.unmountComponentAtNode(div);
   })
 
+  it('accepts mailto links', () => {
+    expect(createLink({
+      to: 'mailto:mail@mail.com',
+      children: 'Test'
+    }).href).toMatch(/^mailto/)
+    ReactDOM.unmountComponentAtNode(div);
+  })
+
+  it('accepts tel links', () => {
+    expect(createLink({
+      to: 'tel:+17777777777',
+      children: 'Test'
+    }).href).toMatch(/^tel/)
+    ReactDOM.unmountComponentAtNode(div);
+  })
+
+  it('accepts global links', () => {
+    expect(createLink({
+      to: '//test.com',
+      children: 'Test'
+    }).href).toMatch(/^(https?:)?\/\/test.com/)
+    expect(createLink({
+      to: 'https://test.com',
+      children: 'Test'
+    }).href).toMatch(/^https:\/\/test.com/)
+    ReactDOM.unmountComponentAtNode(div);
+  })
+
   it('requires children', () => {
     global.console = {error: jest.fn()}
     createLink({to: '/'})

@@ -1,10 +1,9 @@
 {
   "name": "react-component-templates",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Default React Components to use across apps",
   "main": "index.js",
   "scripts": {
-    "paths:node": "NODE_PATH=src/lib/",
     "start": "yarn styles && node scripts/start.js",
     "build": "yarn styles && node scripts/build.js && cp package.json build/package.json",
     "demo": "yarn styles && node scripts/demo.js",
