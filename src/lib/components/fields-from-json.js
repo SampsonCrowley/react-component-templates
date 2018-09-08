@@ -56,7 +56,7 @@ export default class FieldsFromJson extends Component {
   loopFields = (fields) => {
     const form = this.props.form,
           changeFunction = this.props.onChange,
-          confirmationChangeFunction = this.props.onConfirmationChange,
+          confirmationChangeFunction = this.props.onConfirmationChange || changeFunction,
           blurFunction = this.props.onBlur,
           keyUpFunction = this.props.onKeyUp,
           keyDownFunction = this.props.onKeyDown
