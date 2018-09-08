@@ -5,9 +5,9 @@ import 'react-select/dist/react-select.css';
 import 'react-virtualized/styles.css'
 import 'react-virtualized-select/styles.css'
 
-import filterKeys from '../helpers/filter-keys'
+import filterKeys from 'helpers/filter-keys'
 
-import TextField from './text-field'
+import TextField from 'form-components/text-field'
 
 export default class SelectField extends Component {
   constructor(props) {

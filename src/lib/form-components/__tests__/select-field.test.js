@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import SelectField from '../select-field'
+import SelectField from 'form-components/select-field'
 
 describe('Form Components - SelectField', () => {
   const div = document.createElement('div');

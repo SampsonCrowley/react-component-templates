@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import TextField from '../text-field'
+import TextField from 'form-components/text-field'
 
 describe('Form Components - TextField', () => {
   const div = document.createElement('div');

@@ -1,17 +1,17 @@
 import React, { Component, Fragment } from 'react'
 
-import CardSection from './card-section'
-import DisplayOrLoading from './display-or-loading'
-import Gallery from './gallery'
-import LazyImage from './lazy-image'
-import Link from './link'
-import ModalEditor from './modal-editor'
+import CardSection from 'components/card-section'
+import DisplayOrLoading from 'components/display-or-loading'
+import Gallery from 'components/gallery'
+import LazyImage from 'components/lazy-image'
+import Link from 'components/link'
+import ModalEditor from 'components/modal-editor'
 
-import BooleanField from '../form-components/boolean-field'
-import InlineRadioField from '../form-components/inline-radio-field'
-import PasswordField from '../form-components/password-field'
-import SelectField from '../form-components/select-field'
-import TextField from '../form-components/text-field'
+import BooleanField from 'form-components/boolean-field'
+import InlineRadioField from 'form-components/inline-radio-field'
+import PasswordField from 'form-components/password-field'
+import SelectField from 'form-components/select-field'
+import TextField from 'form-components/text-field'
 
 export default class FieldsFromJson extends Component {
 
