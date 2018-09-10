@@ -13,14 +13,16 @@ export default class SelectField extends Component {
   constructor(props) {
     super(props)
 
+    const existed = props.value && props.options && props.options[props.value]
+
     this.state = {
-      autoCompleteValue: '',
+      autoCompleteValue: existed ? existed[props.autoCompleteKey || 'label'] : '',
       clickedState: false
     }
   }
 
   updateOptions = () => {
-    const { options = [] } = this.props,
+    const { options = [], value } = this.props,
           mappedOptions = [],
           quickFind = {};
 
@@ -38,7 +40,8 @@ export default class SelectField extends Component {
       options: mappedOptions,
       ...this.props.filterOptions
     })
-    this.setState({
+
+    this.findOption(value && (typeof value === 'object' ? value.value : value), false, {
       filterOptions: filterOptions,
       options: mappedOptions,
       quickFind: quickFind,
@@ -71,21 +74,24 @@ export default class SelectField extends Component {
     if(changed) this.updateOptions()
   }
 
-  findOption = (value, clearIfInvalid = false) => {
-    let found = this.state.quickFind[`${value}`.toUpperCase()];
-    if((found !== null) && (found !== undefined) && (found = this.state.options[found])) {
+  findOption = (value, clearIfInvalid = false, additionalState = {}) => {
+    let found = (additionalState.quickFind || this.state.quickFind)[`${value}`.toUpperCase()];
+    if((found !== null) && (found !== undefined) && (found = (additionalState.options || this.state.options)[found])) {
       this.setState({
+        ...additionalState,
         autoCompleteValue: found[this.props.autoCompleteKey || 'label']
       })
       this.props.onChange(false, found)
     } else if (clearIfInvalid) {
       this.setState({
+        ...additionalState,
         autoCompleteValue: ''
       })
       this.props.onChange(false, {})
     } else {
       this.setState({
-        autoCompleteValue: value || ''
+        ...additionalState,
+        autoCompleteValue: value || this.state.autoCompleteValue || ''
       })
     }
   }
