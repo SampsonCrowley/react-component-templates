@@ -46,16 +46,18 @@ export default class LazyImage extends Component {
       if(this.mounted) this.swapSrc()
     }
 
-    console.log(img.src = src)
+    console.log('loading: ' + (img.src = src))
   }
 
   swapSrc = () => {
-    console.log('loaded')
+    console.log('loaded: ' + this.props.src)
     this.setState({loaded: true})
   }
 
   render() {
     const { placeholder = Logo, src, useLoader, loaderProps = {}, alt = 'Lazy-Loaded image', ...props } = this.props || {}
+
+    const { loaderStyles = {}, ...otherLoaderProps } = loaderProps || {}
 
     const {loaded} = this.state
 
@@ -68,9 +70,10 @@ export default class LazyImage extends Component {
             marginLeft: 'auto',
             marginRight: 'auto',
             color: '#00F',
-            zIndex:0
+            zIndex:0,
+            ...(loaderStyles || {})
           }}
-          {...loaderProps}
+          {...otherLoaderProps}
         />
       )
     } else {
