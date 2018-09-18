@@ -1,14 +1,15 @@
 export default class RouteParser {
 
-  constructor(links = {}) {
+  constructor(links = {}, index = 0) {
     this.routes = links
     this.current = this.routes.root
     this.routeCache = {}
+    this.pathIndex = +(index || 0)
   }
 
   async setPath(location){
     const fullPath = location.pathname.slice(1, location.pathname.length),
-          path = fullPath.split("/")[0]
+          path = fullPath.split("/")[this.pathIndex]
 
     this.title = null
     this.description = null
