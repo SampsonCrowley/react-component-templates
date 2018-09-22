@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 
 import filterKeys from 'helpers/filter-keys'
 
-const emailPattern = '^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$',
+const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$)',
       emailRegex = new RegExp(emailPattern),
-      phonePattern = '^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4}',
+      phonePattern = '(^$|^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4})',
       phoneRegex = new RegExp(phonePattern),
       phoneFormat = (val) => {
         val = `${val}`.replace(/[^0-9]/g, '')
