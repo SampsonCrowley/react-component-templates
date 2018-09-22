@@ -34,10 +34,11 @@ export default class BooleanField extends Component {
             validator: _validator, checked = false,
             labelProps: lProps = {},
             reversed = false,
+            className = '',
             ...props
           } = this.props,
           { className: labelClassName = '', ...labelProps } = lProps
-          
+
     return (
       <Fragment>
         <label
@@ -47,7 +48,7 @@ export default class BooleanField extends Component {
           {topLabel}
         </label>
         <div
-          className="input-group clickable"
+          className={`${className} input-group clickable`}
           key={`${id}.input`}
           onClick={(e) => {
             e.stopPropagation()

@@ -75,21 +75,22 @@ export default class FieldsFromJson extends Component {
       delegatedChange = false,
       formatter = false,
       valueKey = false,
+      changeOverride = false,
       ...props
     }, key) => {
       const functionalProps = {}
       if(name) {
         if(onBlur) functionalProps['onBlur'] = (ev) => ((blurFunction || onBlur)(ev, name, formatter))
         if(onChange) functionalProps['onChange'] = (ev, value) => {
-          if(!ev && value) return ((changeFunction || onChange)(ev, name, valueKey ? value[valueKey] : value))
-          if(!(typeof ev === 'object')) return ((changeFunction || onChange)(false, name, ev))
-          return ((changeFunction || onChange)(ev, name, formatter))
+          if(!ev && value) return ((changeOverride || changeFunction || onChange)(ev, name, valueKey ? value[valueKey] : value))
+          if(!(typeof ev === 'object')) return ((changeOverride || changeFunction || onChange)(false, name, ev))
+          return ((changeOverride || changeFunction || onChange)(ev, name, formatter))
         }
         if(onConfirmationChange) functionalProps['onConfirmationChange'] = (ev) => ((confirmationChangeFunction || onConfirmationChange)(ev, name.replace('password', 'password_confirmation'), formatter))
         if(onKeyUp) functionalProps['onKeyUp'] = (ev) => ((keyUpFunction || onKeyUp)(ev, name, formatter))
         if(onKeyDown) functionalProps['onKeyDown'] = (ev) => ((keyDownFunction || onKeyDown)(ev, name, formatter))
-        if(delegatedChange) functionalProps['onChange'] = changeFunction || onChange
-        if(toggle) functionalProps['toggle'] = (ev) => onChange(false, name, !props.value)
+        if(delegatedChange) functionalProps['onChange'] = changeOverride || changeFunction || onChange
+        if(toggle) functionalProps['toggle'] = (ev) => (changeOverride || changeFunction || onChange)(false, name, !props.value)
       }
 
 
