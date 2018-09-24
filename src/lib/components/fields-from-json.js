@@ -12,6 +12,7 @@ import InlineRadioField from 'form-components/inline-radio-field'
 import PasswordField from 'form-components/password-field'
 import SelectField from 'form-components/select-field'
 import TextField from 'form-components/text-field'
+import TextAreaField from 'form-components/text-area-field'
 
 export default class FieldsFromJson extends Component {
 
@@ -28,6 +29,7 @@ export default class FieldsFromJson extends Component {
     PasswordField,
     SelectField,
     TextField,
+    TextAreaField,
   }
 
   constructor(props) {
