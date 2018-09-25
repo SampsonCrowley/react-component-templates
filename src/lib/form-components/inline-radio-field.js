@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import { string, node, func, oneOfType, bool, number, arrayOf, shape } from 'prop-types'
 
-import filterKeys from 'helpers/filter-keys'
+import { debounce, filterKeys } from 'helpers'
 
 export default class InlineRadioField extends Component {
   /**
@@ -55,9 +55,11 @@ export default class InlineRadioField extends Component {
             value: selectedVal,
             labelProps: lProps = {},
             onChange = (()=>{}),
+            className: wrapperClassName = '',
             ...props
           } = filterKeys(this.props, ['validator', 'caretIgnore']),
-          { className: labelClassName = '', ...labelProps } = lProps
+          { className: labelClassName = '', ...labelProps } = lProps,
+          debounceChange = debounce(onChange, 100);
 
     return (
       <Fragment>
@@ -65,7 +67,7 @@ export default class InlineRadioField extends Component {
         <div
           key={`${id}.input`}
           id={id}
-          className="row form-group"
+          className={`${wrapperClassName} row form-group`}
         >
           {
             options.map(
@@ -75,12 +77,8 @@ export default class InlineRadioField extends Component {
                   className='col'
                 >
                   <div
-                    className="input-group clickable"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      e.preventDefault()
-                      onChange(value)
-                    }}
+                    className={`${className} input-group clickable`}
+                    onClick={() => debounceChange(value)}
                   >
                     <div className="input-group-prepend">
                       <input
@@ -89,7 +87,7 @@ export default class InlineRadioField extends Component {
                         value={value}
                         checked={selectedVal === value}
                         className='indirect-box'
-                        onChange={function(){}}
+                        onChange={() => debounceChange(value)}
                         {...props}
                       />
                       <div
