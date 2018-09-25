@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from 'react'
 import PropTypes from 'prop-types'
 
+import { debounce } from 'helpers'
+
 export default class BooleanField extends Component {
   /**
    * @type {object}
@@ -37,7 +39,8 @@ export default class BooleanField extends Component {
             className = '',
             ...props
           } = this.props,
-          { className: labelClassName = '', ...labelProps } = lProps
+          { className: labelClassName = '', ...labelProps } = lProps,
+          debounceToggle = debounce(toggle, 100);
 
     return (
       <Fragment>
@@ -50,11 +53,7 @@ export default class BooleanField extends Component {
         <div
           className={`${className} input-group clickable`}
           key={`${id}.input`}
-          onClick={(e) => {
-            e.stopPropagation()
-            e.preventDefault()
-            toggle()
-          }}
+          onClick={() => debounceToggle()}
         >
           <div className="input-group-prepend">
             <input
@@ -64,6 +63,7 @@ export default class BooleanField extends Component {
               value={1}
               checked={!!checked}
               className='indirect-box'
+              onChange={() => debounceToggle()}
               {...props}
             />
             {
