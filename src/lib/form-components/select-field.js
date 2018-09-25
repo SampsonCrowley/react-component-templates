@@ -5,7 +5,7 @@ import 'react-select/dist/react-select.css';
 import 'react-virtualized/styles.css'
 import 'react-virtualized-select/styles.css'
 
-import filterKeys from 'helpers/filter-keys'
+import Objected from 'helpers/objected'
 
 import TextField from 'form-components/text-field'
 
@@ -41,7 +41,7 @@ export default class SelectField extends Component {
       ...this.props.filterOptions
     })
 
-    this.findOption(value && (typeof value === 'object' ? value.value : value), false, {
+    this.findOption((Object.isPureObject(value) ? value.value : value), false, {
       filterOptions: filterOptions,
       options: mappedOptions,
       quickFind: quickFind,
@@ -59,7 +59,7 @@ export default class SelectField extends Component {
     let changed = options.length !== oldOptions.length;
     if(!changed) {
       for(let i = 0; i < longestLength; i++) {
-        if(options[i] && typeof options[i] === 'object') {
+        if(Object.isPureObject(options[i])) {
           if((options[i].value !== oldOptions[i].value) || (options[i].label !== oldOptions[i].label)) {
             changed = true;
           }
@@ -105,7 +105,7 @@ export default class SelectField extends Component {
   }
 
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
 
     const select = (
       !this.state.clickedState ? (
@@ -130,7 +130,7 @@ export default class SelectField extends Component {
           key={`${id}.input`}
           name={name}
           id={id}
-          value={value && ((typeof value === 'object') ? value.value : value)}
+          value={Object.isPureObject(value) ? value.value : value}
           options={this.state.options}
           filterOptions={this.state.filterOptions}
           inputProps={{

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import { string, node, func, oneOfType, bool, number, arrayOf, shape } from 'prop-types'
 
-import { debounce, filterKeys } from 'helpers'
+import { debounce, Objected } from 'helpers'
 
 export default class InlineRadioField extends Component {
   /**
@@ -57,7 +57,7 @@ export default class InlineRadioField extends Component {
             onChange = (()=>{}),
             className: wrapperClassName = '',
             ...props
-          } = filterKeys(this.props, ['validator', 'caretIgnore']),
+          } = Objected.filterKeys(this.props, ['validator', 'caretIgnore']),
           { className: labelClassName = '', ...labelProps } = lProps,
           debounceChange = debounce(onChange, 100);
 

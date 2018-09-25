@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "3.1.18",
+  "version": "4.0.0",
   "description": "Default React Components to use across apps",
   "main": "index.js",
   "scripts": {
@@ -106,6 +106,7 @@
       "src/**/*.{js,jsx,mjs}"
     ],
     "setupFiles": [
+      "<rootDir>/src/lib/polyfills/index.js",
       "<rootDir>/config/polyfills.js"
     ],
     "testMatch": [

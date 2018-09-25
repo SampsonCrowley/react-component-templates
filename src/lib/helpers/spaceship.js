@@ -1,5 +1,5 @@
 export default class Spaceship {
-  comparor(a, b) {
+  static comparor(a, b) {
     /*eslint eqeqeq: ["error", "smart"]*/
     if ((a === null || b === null) || (typeof a != typeof b)) {
       return null;
@@ -16,7 +16,7 @@ export default class Spaceship {
     }
   }
 
-  operator(a, b, keys) {
+  static operator(a, b, keys) {
     if(!keys) return this.comparor(a, b)
     else {
       for(let k = 0; k < keys.length; k++) {

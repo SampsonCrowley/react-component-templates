@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import PropTypes from 'prop-types'
 
-import filterKeys from 'helpers/filter-keys'
+import Objected from 'helpers/objected'
 /**
  * textarea tag with built in helper functions and easier validation
  */
@@ -90,7 +90,7 @@ export default class TextField extends Component {
   }
 
   render(){
-    const {label = '', name, id = name, feedback = '', value, skipExtras = false, ...props} = filterKeys(this.props, this._specialKeys)
+    const {label = '', name, id = name, feedback = '', value, skipExtras = false, ...props} = Objected.filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
 

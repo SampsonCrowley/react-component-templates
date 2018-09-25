@@ -60,6 +60,7 @@ module.exports = {
     'form-components': paths.formComponentsIndexJs,
     helpers: paths.helpersIndexJs,
     pages: paths.pagesIndexJs,
+    polyfills: paths.polyfillsIndexJs,
   }, // CRL: library index file instead of app index
   output: {
     // CRL: Updated whole block with library specific info

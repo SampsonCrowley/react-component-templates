@@ -41,6 +41,7 @@ if (!checkRequiredFiles([
   paths.formComponentsIndexJs,
   paths.helpersIndexJs,
   paths.pagesIndexJs,
+  paths.polyfillsIndexJs,
 ])) { // CRL: Updated with library index file
   process.exit(1);
 }

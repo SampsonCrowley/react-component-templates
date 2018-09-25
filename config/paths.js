@@ -91,4 +91,8 @@ module.exports = {
   pagesBuild: resolveApp('build/pages'),
   pagesIndexJs: resolveApp('src/lib/pages/index.js'),
   pagesSrc: resolveApp('src/lib/pages'),
+
+  polyfillsBuild: resolveApp('build/polyfills'),
+  polyfillsIndexJs: resolveApp('src/lib/polyfills/index.js'),
+  polyfillsSrc: resolveApp('src/lib/polyfills'),
 };

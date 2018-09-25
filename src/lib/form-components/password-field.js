@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import PropTypes from 'prop-types'
 
-import filterKeys from 'helpers/filter-keys'
+import Objected from 'helpers/objected'
 
 export default class PasswordField extends Component {
   /**
@@ -86,7 +86,7 @@ export default class PasswordField extends Component {
             value = '',
             confirmationValue = '',
             ...props
-          } = filterKeys(this.props, ['onChange', 'onConfirmationChange']),
+          } = Objected.filterKeys(this.props, ['onChange', 'onConfirmationChange']),
           confirmationName = name.replace('password', 'password_confirmation'),
           confirmationId = id.replace('password', 'password_confirmation')
 

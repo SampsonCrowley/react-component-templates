@@ -85,7 +85,7 @@ export default class FieldsFromJson extends Component {
         if(onBlur) functionalProps['onBlur'] = (ev) => ((blurFunction || onBlur)(ev, name, formatter))
         if(onChange) functionalProps['onChange'] = (ev, value) => {
           if(!ev && value) return ((changeOverride || changeFunction || onChange)(ev, name, valueKey ? value[valueKey] : value))
-          if(!(typeof ev === 'object')) return ((changeOverride || changeFunction || onChange)(false, name, ev))
+          if(!Object.isObject(ev, true)) return ((changeOverride || changeFunction || onChange)(false, name, ev))
           return ((changeOverride || changeFunction || onChange)(ev, name, formatter))
         }
         if(onConfirmationChange) functionalProps['onConfirmationChange'] = (ev) => ((confirmationChangeFunction || onConfirmationChange)(ev, name.replace('password', 'password_confirmation'), formatter))
