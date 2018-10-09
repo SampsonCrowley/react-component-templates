@@ -30,6 +30,7 @@ export default class RouteParser {
     if(this.current.alias) this.current = this.routes[this.current.to] || this.routes.root
 
     if(this.current.cache && this.routeCache[fullPath]) {
+      console.log('cached')
       this.title = this.routeCache[fullPath]
     } else if(this.current.resource) {
       try {
@@ -37,7 +38,7 @@ export default class RouteParser {
               matches = location.pathname.match(regex);
 
         if(matches) {
-          let id = (this.current.path ? matches[1] : matches[0]);
+          let id = matches[this.current.match_idx || (this.current.path ? 1 : 0)];
           if(this.current.api && id){
             if((`${id}`.toLowerCase() === 'new')) {
               id = 'New'
@@ -58,6 +59,7 @@ export default class RouteParser {
         }
 
       } catch (e) {
+        console.log(e)
         this.title = this.current.title.replace(/%RESOURCE%/, 'Not Found')
         this.description = this.current.description.replace(/%RESOURCE%/, 'Not Found')
       }
