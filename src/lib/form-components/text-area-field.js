@@ -17,9 +17,6 @@ export default class TextField extends Component {
    * @property {String} id - Input Id
    * @property {String} name - Input Name
    * @property {Function} onChange - Run on input change
-   * @property {String} type - Input type
-   * @property {Boolean} useEmailFormat - Strict Pattern parse email
-   * @property {Boolean} usePhoneFormat - Automagically formats phone number and adds pattern checking
    * @property {String} badFormatMessage - Message to add to tooltip on bad format
    * @property {String|Element} feedback - Feedback to show on Input focus
    * @property {String|Boolean|Number} value - Input value

@@ -14,6 +14,19 @@ const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@
           if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
         }
         return val
+      },
+      currencyPattern = '^[0-9]+((\\.[0-9]{2})$|$)',
+      currencyRegex = new RegExp(currencyPattern),
+      currencyFormat = (val) => {
+        val = `${val}`.replace(/[^0-9\.]/g, '')
+        if(/\./.test(val)) {
+          val = val.split('.')
+          val[1] = `${val[1]}00`.slice(0, 2)
+          val = `${val[0] || '0'}.${val[1]}`
+        } else {
+          val = val + '.00'
+        }
+        return val
       }
 
 export {
@@ -22,6 +35,9 @@ export {
   phonePattern,
   phoneRegex,
   phoneFormat,
+  currencyPattern,
+  currencyRegex,
+  currencyFormat,
 }
 /**
  * input tag with built in helper functions and easier validation
@@ -30,7 +46,7 @@ export default class TextField extends Component {
   /**
    * @type {Array}
    */
-  static specialKeys = Object.freeze(["badFormatMessage", "caretIgnore", "onChange", "pattern", "looseCasing", "useEmailFormat", "usePhoneFormat", "validator"])
+  static specialKeys = Object.freeze(["badFormatMessage", "caretIgnore", "onChange", "pattern", "looseCasing", "useEmailFormat", "usePhoneFormat", "useCurrencyFormat", "validator"])
 
   /**
    * @type {object}
@@ -85,12 +101,12 @@ export default class TextField extends Component {
    * @param {object} prevState - previous state
    */
   static getDerivedStateFromProps(props, prevState) {
-    if(props.useEmailFormat || props.usePhoneFormat) {
-      const regexToUse = props.useEmailFormat ? emailRegex : phoneRegex,
-            badMessage = props.badFormatMessage || `Invalid ${props.useEmailFormat ? 'Email' : 'Phone'} Format`
+    if(props.useEmailFormat || props.usePhoneFormat || props.useCurrencyFormat) {
+      const regexToUse = props.useEmailFormat ? emailRegex : (props.usePhoneFormat ? phoneRegex : currencyRegex),
+            badMessage = props.badFormatMessage || (props.useCurrencyFormat ? 'Invalid Amount' : `Invalid ${props.useEmailFormat ? 'Email' : 'Phone'} Format`)
 
       return {
-        pattern: (props.useEmailFormat ? emailPattern : phonePattern),
+        pattern: (props.useEmailFormat ? emailPattern : (props.usePhoneFormat ? phonePattern : currencyPattern)),
         validator: (ev) => regexToUse.test(ev.target.value) ? '' : badMessage
       }
     } else if(props.validator instanceof RegExp) {
@@ -122,8 +138,9 @@ export default class TextField extends Component {
    * @type {Function}
    * @param {object} prevProps - used to check for ignored characters
    */
-  componentDidUpdate ({ value, caretIgnore, usePhoneFormat, looseCasing }) {
+  componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useCurrencyFormat, looseCasing }) {
     if(usePhoneFormat) caretIgnore = '-'
+    if(useCurrencyFormat) caretIgnore = '^0-9\.'
 
     if (this._caretPosition && (this.props.value !== value)) {
       let str, val, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
@@ -194,6 +211,9 @@ export default class TextField extends Component {
     if(this.props.useEmailFormat) {
       ev.target.value = String(ev.target.value || '').toLowerCase()
       this.onChange(ev)
+    } else if(this.props.useCurrencyFormat) {
+      ev.target.value = currencyFormat(String(ev.target.value || '0'))
+      this.onChange(ev)
     }
     if(this.props.onBlur) this.props.onBlur(ev)
   }
@@ -202,7 +222,7 @@ export default class TextField extends Component {
     const {label = '', name, id = name, type = 'text', feedback = '', value, skipExtras = false, ...props} = Objected.filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
-    if(this.props.useEmailFormat) props.onBlur = (ev) => this.onBlur(ev)
+    if(this.props.useEmailFormat || this.props.useCurrencyFormat) props.onBlur = (ev) => this.onBlur(ev)
 
     const input = (
       <input

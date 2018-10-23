@@ -7,10 +7,16 @@ import TextField, {
   emailRegex,
   phonePattern,
   phoneRegex,
-  phoneFormat
+  phoneFormat,
+  currencyPattern,
+  currencyRegex,
+  currencyFormat
 } from './text-field'
 
 export {
+  currencyPattern,
+  currencyRegex,
+  currencyFormat,
   emailPattern,
   emailRegex,
   phonePattern,
