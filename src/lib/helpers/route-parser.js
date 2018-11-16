@@ -16,16 +16,20 @@ export default class RouteParser {
 
     const root = this.routes.root
 
-    this.current = this.routes[path] ||
-                   (
-                     (
-                       !path ||
-                       (
-                         root.regex &&
-                         new RegExp(root.regex).test(path)
-                       )
-                     ) ? this.routes.root : this.routes.fourOhFour
-                   )
+    try {
+      this.current = this.routes[path] || (
+        (
+          !path || (
+            root.regex &&
+            new RegExp(root.regex).test(path)
+          )
+        ) ? root : this.routes.fourOhFour
+      )
+    } catch(e) {
+      this.current = root
+    }
+
+
 
     if(this.current.alias) this.current = this.routes[this.current.to] || this.routes.root
 
