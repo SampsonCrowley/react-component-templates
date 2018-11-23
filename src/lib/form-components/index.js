@@ -2,6 +2,7 @@ import BooleanField from './boolean-field'
 import InlineRadioField from './inline-radio-field'
 import PasswordField from './password-field'
 import SelectField from './select-field'
+import TextAreaField from './text-area-field'
 import TextField, {
   emailPattern,
   emailRegex,
@@ -26,6 +27,7 @@ export {
   InlineRadioField,
   PasswordField,
   SelectField,
+  TextAreaField,
   TextField,
 }
 

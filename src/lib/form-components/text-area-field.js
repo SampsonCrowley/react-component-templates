@@ -5,7 +5,7 @@ import Objected from 'helpers/objected'
 /**
  * textarea tag with built in helper functions and easier validation
  */
-export default class TextField extends Component {
+export default class TextAreaField extends Component {
   /**
    * @type {Array}
    */
@@ -27,7 +27,7 @@ export default class TextField extends Component {
       PropTypes.string,
       PropTypes.node
     ]),
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     name: PropTypes.string.isRequired,
     onBlur: PropTypes.func,
     onChange: PropTypes.func,

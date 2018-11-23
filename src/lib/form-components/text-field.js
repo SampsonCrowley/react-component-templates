@@ -67,7 +67,7 @@ export default class TextField extends Component {
       PropTypes.string,
       PropTypes.node
     ]),
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     name: PropTypes.string.isRequired,
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
