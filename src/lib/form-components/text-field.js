@@ -18,7 +18,7 @@ const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@
       currencyPattern = '^[0-9]+((\\.[0-9]{2})$|$)',
       currencyRegex = new RegExp(currencyPattern),
       currencyFormat = (val) => {
-        val = `${val}`.replace(/[^0-9\.]/g, '')
+        val = `${val}`.replace(/[^0-9.]/g, '')
         if(/\./.test(val)) {
           val = val.split('.')
           val[1] = `${val[1]}00`.slice(0, 2)
@@ -140,7 +140,7 @@ export default class TextField extends Component {
    */
   componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useCurrencyFormat, looseCasing }) {
     if(usePhoneFormat) caretIgnore = '-'
-    if(useCurrencyFormat) caretIgnore = '^0-9\.'
+    if(useCurrencyFormat) caretIgnore = '^0-9.'
 
     if (this._caretPosition && (this.props.value !== value)) {
       let str, val, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
@@ -158,15 +158,20 @@ export default class TextField extends Component {
         }
       }
 
-      if(caretStr) {
-        let regex = new RegExp(caretStr, 'g'),
-            splitReg = new RegExp(str.replace(regex, '').split('').join(`(${caretStr})?`)),
-            matches = str.match(regex) || [],
-            effectiveString = String((val.match(splitReg) || [])[0]),
-            effectiveMatches = (effectiveString.match(regex) || []).length
+      try {
+        if(str && caretStr) {
+          let regex = new RegExp(caretStr, 'g'),
+              splitReg = new RegExp(str.replace(regex, '').split('').join(`(${caretStr})?`)),
+              matches = str.match(regex) || [],
+              effectiveString = String((val.match(splitReg) || [])[0]),
+              effectiveMatches = (effectiveString.match(regex) || []).length
 
-        index = val.indexOf(effectiveString) + this._caretPosition + (effectiveMatches - matches.length);
-      } else {
+          index = val.indexOf(effectiveString) + this._caretPosition + (effectiveMatches - matches.length);
+        } else {
+          index = val.indexOf(str) + this._caretPosition;
+        }
+      } catch(err) {
+        console.log(err)
         index = val.indexOf(str) + this._caretPosition;
       }
 
@@ -202,7 +207,7 @@ export default class TextField extends Component {
   }
 
   /**
-   * format emails on blur since selectionRange is not applicable
+   * format emails and money on blur since selectionRange is not applicable
    * call props.onBlur if set
    * @type {Function}
    * @param {event} ev - synthetic change event

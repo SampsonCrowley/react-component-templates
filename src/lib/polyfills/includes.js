@@ -1,4 +1,5 @@
 if (!Array.prototype.includes) {
+  // eslint-disable-next-line no-extend-native
   Object.defineProperty(Array.prototype, 'includes', {
     value: function(searchElement, fromIndex) {
 

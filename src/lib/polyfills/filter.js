@@ -1,6 +1,8 @@
 if (!Array.prototype.filter){
+  // eslint-disable-next-line no-extend-native
   Array.prototype.filter = function(func, thisArg) {
     'use strict';
+    // eslint-disable-next-line valid-typeof
     if ( ! ((typeof func === 'Function' || typeof func === 'function') && this) )
         throw new TypeError();
 
