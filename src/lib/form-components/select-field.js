@@ -17,7 +17,8 @@ export default class SelectField extends Component {
 
     this.state = {
       autoCompleteValue: existed ? existed[props.autoCompleteKey || 'label'] : '',
-      clickedState: false
+      clickedState: false,
+      hotSwap: { length: 0 }
     }
   }
 
@@ -36,15 +37,35 @@ export default class SelectField extends Component {
       for(let k in option) quickFind[`${option[k]}`.toUpperCase()] = i;
     }
 
-    const filterOptions = createFilterOptions({
-      options: mappedOptions,
-      ...this.props.filterOptions
-    })
+    const baseFilterOptions = Objected.filterKeys(Objected.deepClone(this.props.filterOptions || {}), ['hotSwap']),
+          hotSwap = {length: 0, ...((this.props.filterOptions || {}).hotSwap || {})},
+          fullFilterOptions = createFilterOptions({
+            options: mappedOptions,
+            ...baseFilterOptions
+          })
+
+    let targetedFilterOptions = Objected.deepClone(baseFilterOptions),
+        filterOptions
+
+    if(hotSwap.length && hotSwap.indexes) {
+      targetedFilterOptions.indexes = hotSwap.indexes
+      targetedFilterOptions = createFilterOptions({
+        options: mappedOptions,
+        ...targetedFilterOptions
+      })
+
+      filterOptions = (`${this.state.autoCompleteValue || ''}`.length > hotSwap.length) ? fullFilterOptions : targetedFilterOptions
+    } else {
+      filterOptions = targetedFilterOptions = fullFilterOptions
+    }
 
     this.findOption((Object.isPureObject(value) ? value.value : value), false, {
-      filterOptions: filterOptions,
+      hotSwap,
+      filterOptions,
+      fullFilterOptions,
+      targetedFilterOptions,
       options: mappedOptions,
-      quickFind: quickFind,
+      quickFind,
     })
   }
 
@@ -104,39 +125,57 @@ export default class SelectField extends Component {
     this.props.onChange(false, value)
   }
 
+  onInputChange = (value) => {
+    if(!this.state.hotSwap.length) return value
+
+    const {
+      hotSwap = {},
+      fullFilterOptions,
+      targetedFilterOptions
+    } = this.state
+
+    this.setState({
+      filterOptions: (`${value || ''}`.length > (hotSwap.length || 0)) ? fullFilterOptions : targetedFilterOptions
+    })
+
+    return value
+  }
+
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions'])
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
+          { autoCompleteValue, clickedState, filterOptions, options, quickFind } = this.state
 
     const select = (
-      !this.state.clickedState ? (
+      !clickedState ? (
         <TextField
           key={`${id}.input`}
           name={name}
           id={id}
-          value={this.state.autoCompleteValue}
+          value={autoCompleteValue}
           onKeyUp={(ev) => {if(ev.keyCode === 9) this.setState({clickedState: true})}}
           onChange={(ev) => this.setState({autoCompleteValue: ev.target.value})}
-          onBlur={() => this.findOption(this.state.autoCompleteValue, true)}
+          onBlur={() => this.findOption(autoCompleteValue, true)}
           onClick={() => this.setState({clickedState: true})}
           skipExtras
           {...viewProps}
         />
       ) : (
         <Select
-          autoFocus={this.state.clickedState}
+          autoFocus={clickedState}
           menuIsOpen
           openOnFocus
-          defaultInputValue={this.state.autoCompleteValue}
+          defaultInputValue={autoCompleteValue}
           key={`${id}.input`}
           name={name}
           id={id}
-          value={Object.isPureObject(value) ? value.value : value}
-          options={this.state.options}
-          filterOptions={this.state.filterOptions}
+          value={Object.isPureObject(value) ? value.value : (options && options[quickFind[`${autoCompleteValue}`]]) || value || ''}
+          options={options}
+          filterOptions={filterOptions}
           inputProps={{
             ...props,
             autoComplete: 'nope'
           }}
+          onInputChange={this.onInputChange}
           onChange={this.onChange}
           onBlur={() => this.setState({clickedState: false})}
         />
