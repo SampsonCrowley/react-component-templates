@@ -1,0 +1,67 @@
+.modal-editor
+  display: block
+  position: fixed
+  height: 0
+  width: 0
+  transition: all 0.2s ease-in-out;
+  padding: .5rem 1rem
+  overflow: hidden
+  z-index: 10000
+  font-size: 1rem
+  // h2
+  //   font-size: 1rem
+  ul.product-list
+    line-height: 1
+    margin: 0
+    font-size: 1.25rem
+    &.numbered
+      margin-left: 1rem
+      list-style: decimal;
+      font-size: .75rem
+      li
+        margin: 0
+        &:before
+          content: ''
+    li
+      margin: 0
+      &:before
+        content: '- '
+  section
+    background: #FFF
+    border-radius: 1rem
+    position: relative;
+    .overflow-y
+      margin-top: .5rem
+      margin-bottom: .5rem
+      height: 100%
+      height: calc(100% - 4rem)
+      overflow-y: auto
+    &.package-wrapper
+      width: 100%
+      height: 100%
+      z-index: 999
+      padding-top: .5rem
+      padding-bottom: .5rem
+      overflow: hidden;
+    &.package-option
+      background: #ccc
+      min-height: 500px
+      padding: 1rem
+      margin-bottom: 1rem
+      h3
+        border-bottom: 1px solid #fff
+        padding-bottom: 1rem
+        margin-bottom: 1rem
+  div.package-option
+    border-radius: 1rem
+    position: relative;
+    background: #ccc
+    min-height: 500px
+    padding: 1rem
+    margin-bottom: 1rem
+  &.open
+    top:50vh;
+    left:50vw;
+    height: 100vh;
+    width: 100vw
+    transform:translate(-50%, -50%);

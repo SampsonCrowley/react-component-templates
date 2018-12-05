@@ -1,0 +1,5 @@
+{
+  "name": "ModalEditor",
+  "private": true,
+  "main": "./modal-editor.js"
+}

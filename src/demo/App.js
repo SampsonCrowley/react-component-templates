@@ -1,9 +1,11 @@
 import React from 'react';
-import Example from '../lib/form-components/text-field';
+import Example from '../lib';
+import { SecondExample } from '../lib';
 
 const App = () => (
   <div>
-    <Example useCurrencyFormat/>
+    <Example />
+    <SecondExample />
   </div>
 );
 
