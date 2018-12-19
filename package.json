@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "5.1.2",
+  "version": "5.6.2",
   "description": "Default React Components to use across apps",
   "main": "build/index.js",
   "scripts": {
@@ -14,9 +14,7 @@
     "test": "yarn styles && node scripts/test.js --env=jsdom",
     "login": "npm adduser"
   },
-  "files": [
-    "*"
-  ],
+  "files": [ "*" ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SampsonCrowley/react-component-templates.git"
