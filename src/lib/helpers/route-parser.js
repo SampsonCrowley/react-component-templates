@@ -14,6 +14,7 @@ export default class RouteParser {
     this.title = null
     this.description = null
     this.id = null
+    this.emptyFetch = false
 
     const root = this.routes.root
 
@@ -59,7 +60,7 @@ export default class RouteParser {
           }
           this.id = id || 'Index'
           this.title = this.current.title.replace(/%RESOURCE%/, this.id)
-          this.description = description || (this.current.description || '').replace(/%RESOURCE%/, this.id)
+          this.description = description || ((this.emptyFetch = true) && (this.current.description || '').replace(/%RESOURCE%/, this.id))
 
           if(this.current.cache) this.routeCache[fullPath] = this.title
         } else {
@@ -82,10 +83,11 @@ export default class RouteParser {
     this.setDocumentTitle()
 
     return {
-      id: this.id,
-      title: this.title,
+      currentRoute: this.current,
       description: this.description,
-      currentRoute: this.current
+      emptyFetch: !!this.emptyFetch,
+      id: this.id,
+      title: this.title
     }
   }
 
