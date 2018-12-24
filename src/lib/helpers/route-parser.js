@@ -13,6 +13,7 @@ export default class RouteParser {
 
     this.title = null
     this.description = null
+    this.image = null
     this.id = null
     this.emptyFetch = false
 
@@ -39,7 +40,7 @@ export default class RouteParser {
       console.log('cached')
       this.title = this.routeCache[fullPath].title
       this.description = this.routeCache[fullPath].description
-      this.description = this.routeCache[fullPath].description
+      this.image = this.routeCache[fullPath].image
       this.id = this.routeCache[fullPath].id
     } else if(this.current.resource) {
       try {
@@ -47,7 +48,7 @@ export default class RouteParser {
               matches = location.pathname.match(regex);
 
         if(matches) {
-          let description, id = matches[this.current.match_idx || (this.current.path ? 1 : 0)]
+          let description, image, id = matches[this.current.match_idx || (this.current.path ? 1 : 0)]
           if(this.current.api && id){
             if((`${id}`.toLowerCase() === 'new')) {
               id = 'New'
@@ -56,29 +57,34 @@ export default class RouteParser {
                     resource = await result.json()
               id = resource[this.current.method || 'title']
               description = !!this.current.direct_description && resource[this.current.description_method || 'description']
+              image = !!this.current.direct_image && resource[this.current.image_method || 'image']
             }
           }
           this.id = id || 'Index'
           this.title = this.current.title.replace(/%RESOURCE%/, this.id)
           this.description = description || ((this.emptyFetch = true) && (this.current.description || '').replace(/%RESOURCE%/, this.id))
+          this.image = image || (this.current.image || '').replace(/%RESOURCE%/, this.id)
 
           if(this.current.cache) this.routeCache[fullPath] = this.title
         } else {
           this.title = this.current.index_title || this.current.title.replace(/%RESOURCE%/, 'Index')
           this.description = this.current.index_description || this.current.description.replace(/%RESOURCE%/, 'Index')
+          this.image = this.current.index_image || this.current.image.replace(/%RESOURCE%/, 'index')
           this.id = 'Index'
         }
 
       } catch (e) {
         console.log(e)
-        this.title = this.current.title.replace(/%RESOURCE%/, 'Not Found')
-        this.description = this.current.description.replace(/%RESOURCE%/, 'Not Found')
+        this.title = (this.current.title || '').replace(/%RESOURCE%/, 'Not Found')
+        this.description = (this.current.description || '').replace(/%RESOURCE%/, 'Not Found')
+        this.image = (this.current.image || '').replace(/%RESOURCE%/, 'index')
       }
     }
 
     this.id = this.id || ''
     this.title = this.title || this.current.title
     this.description = this.description || this.current.description
+    this.image = this.image || this.current.image
 
     this.setDocumentTitle()
 
@@ -87,7 +93,8 @@ export default class RouteParser {
       description: this.description,
       emptyFetch: !!this.emptyFetch,
       id: this.id,
-      title: this.title
+      title: this.title,
+      image: this.image
     }
   }
 
