@@ -65,7 +65,12 @@ export default class RouteParser {
           this.description = description || ((this.emptyFetch = true) && (this.current.description || '').replace(/%RESOURCE%/, this.id))
           this.image = image || (this.current.image || '').replace(/%RESOURCE%/, this.id)
 
-          if(this.current.cache) this.routeCache[fullPath] = this.title
+          if(this.current.cache && this.title) this.routeCache[fullPath] = {
+            title: this.title,
+            description: this.description,
+            image: this.image,
+            id: this.id,
+          }
         } else {
           this.title = this.current.index_title || this.current.title.replace(/%RESOURCE%/, 'Index')
           this.description = this.current.index_description || this.current.description.replace(/%RESOURCE%/, 'Index')
