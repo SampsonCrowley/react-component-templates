@@ -176,16 +176,25 @@ export default class TextField extends Component {
       }
 
       if (index !== -1) {
-        try {
-          const ogType = this.refs.input.type || 'text',
-                needsChange = !(/text|search|password|tel|url/.test(ogType))
-          if(needsChange) this.refs.input.type = 'text'
+        this.setSelection(this.refs.input, () => {
           this.refs.input.selectionStart = this.refs.input.selectionEnd = index;
-          if(needsChange) this.refs.input.type = ogType
-        } catch(err) {
-          console.log(err)
-        }
+        })
       }
+    }
+  }
+
+  setSelection(el, func) {
+    try {
+      const ogType = el.type || 'text',
+            needsChange = !(/text|search|password|tel|url/.test(ogType))
+
+      if(needsChange) el.type = 'text'
+      func(el)
+      if(needsChange) el.type = ogType
+    } catch(err) {
+      console.log(err)
+      
+      el.type = this.props.type || 'text'
     }
   }
 
@@ -196,7 +205,10 @@ export default class TextField extends Component {
    * @param {event} ev - synthetic change event
    */
   onChange(ev) {
-    this._caretPosition = Number(ev.target.selectionEnd);
+
+    this.setSelection(ev.target, (el) => {
+      this._caretPosition = Number(el.selectionEnd);
+    })
 
     this._rawStr = String(ev.target.value);
 

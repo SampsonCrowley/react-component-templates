@@ -4,9 +4,9 @@ exports[`Form Components - SelectField is snapshotable 1`] = `
 Array [
   <label
     htmlFor="testId"
->
+  >
     test label
-</label>,
+  </label>,
   <input
     id="testId"
     name="testName"
@@ -16,11 +16,11 @@ Array [
     onKeyUp={[Function]}
     type="text"
     value="test value"
-/>,
+  />,
   <small
     className="form-control-focused"
->
+  >
     test feedback
-</small>,
+  </small>,
 ]
 `;

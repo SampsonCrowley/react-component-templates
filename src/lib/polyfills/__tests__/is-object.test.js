@@ -1,4 +1,4 @@
-import 'polyfills/is-array'
+import 'polyfills/is-object'
 
 describe('Object - isObject', () => {
   const obj = {a: 1, b: 2},

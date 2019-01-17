@@ -4,19 +4,19 @@ exports[`Form Components - TextAreaField is snapshotable 1`] = `
 Array [
   <label
     htmlFor="testId"
->
+  >
     test label
-</label>,
+  </label>,
   <textarea
     id="testId"
     name="testName"
     onChange={[Function]}
     value="test value"
-/>,
+  />,
   <small
     className="form-control-focused"
->
+  >
     test feedback
-</small>,
+  </small>,
 ]
 `;

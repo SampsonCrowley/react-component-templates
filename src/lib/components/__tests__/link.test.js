@@ -1,3 +1,4 @@
+import 'polyfills'
 import React from 'react'
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
@@ -29,7 +30,7 @@ describe('Components - Link', () => {
 
   it('requires a "to" prop', () => {
     global.console = {error: jest.fn()}
-    expect(() => createLink({children: 'Test'})).toThrow()
+    expect(() => createLink({children: 'Test' })).toThrow()
     expect(console.error).toBeCalled()
     ReactDOM.unmountComponentAtNode(div);
   })
