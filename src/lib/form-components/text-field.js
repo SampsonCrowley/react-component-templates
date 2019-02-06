@@ -55,6 +55,7 @@ export default class TextField extends Component {
    * @property {String} name - Input Name
    * @property {Function} onChange - Run on input change
    * @property {String} type - Input type
+   * @property {Boolean} uncontrolled - use an uncontrolled input
    * @property {Boolean} useEmailFormat - Strict Pattern parse email
    * @property {Boolean} usePhoneFormat - Automagically formats phone number and adds pattern checking
    * @property {String} badFormatMessage - Message to add to tooltip on bad format
@@ -72,6 +73,7 @@ export default class TextField extends Component {
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
     type: PropTypes.string,
+    uncontrolled: PropTypes.bool,
     useEmailFormat: PropTypes.bool,
     usePhoneFormat: PropTypes.bool,
     badFormatMessage: PropTypes.string,
@@ -193,7 +195,7 @@ export default class TextField extends Component {
       if(needsChange) el.type = ogType
     } catch(err) {
       console.log(err)
-      
+
       el.type = this.props.type || 'text'
     }
   }
@@ -236,7 +238,17 @@ export default class TextField extends Component {
   }
 
   render(){
-    const {label = '', name, id = name, type = 'text', feedback = '', value, skipExtras = false, ...props} = Objected.filterKeys(this.props, this._specialKeys)
+    const {
+      label = '',
+      name,
+      id = name,
+      type = 'text',
+      feedback = '',
+      value,
+      skipExtras = false,
+      uncontrolled = false,
+      ...props
+    } = Objected.filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
     if(this.props.useEmailFormat || this.props.useCurrencyFormat) props.onBlur = (ev) => this.onBlur(ev)
@@ -248,8 +260,8 @@ export default class TextField extends Component {
         name={name}
         id={id}
         type={type}
-        value={value}
         onChange={(ev) => this.onChange(ev)}
+        {...(uncontrolled ? {} : {value})}
         {...props}
       />
     )
