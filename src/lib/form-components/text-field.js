@@ -141,6 +141,7 @@ export default class TextField extends Component {
    * @param {object} prevProps - used to check for ignored characters
    */
   componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useCurrencyFormat, looseCasing }) {
+    if(this.refs.input && (this.refs.input.type === 'email')) return;
     if(usePhoneFormat) caretIgnore = '-'
     if(useCurrencyFormat) caretIgnore = '^0-9.'
 
@@ -186,6 +187,8 @@ export default class TextField extends Component {
   }
 
   setSelection(el, func) {
+    if(el.type === 'email') return;
+
     try {
       const ogType = el.type || 'text',
             needsChange = !(/text|search|password|tel|url/.test(ogType))

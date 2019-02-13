@@ -175,6 +175,7 @@ export default class SelectField extends Component {
             ...props,
             autoComplete: 'nope'
           }}
+          className='text-dark'
           onInputChange={this.onInputChange}
           onChange={this.onChange}
           onBlur={() => this.setState({clickedState: false})}
