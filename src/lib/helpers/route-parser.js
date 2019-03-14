@@ -53,7 +53,7 @@ export default class RouteParser {
             if((`${id}`.toLowerCase() === 'new')) {
               id = 'New'
             } else {
-              const result = await fetch(this.current.api + id),
+              const result = await fetch(this.current.api + id + this.current.format || ''),
                     resource = await result.json()
               id = resource[this.current.method || 'title']
               description = !!this.current.direct_description && resource[this.current.description_method || 'description']
