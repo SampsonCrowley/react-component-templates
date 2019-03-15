@@ -24,10 +24,14 @@ const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@
           val[1] = `${val[1]}00`.slice(0, 2)
           val = `${val[0] || '0'}.${val[1]}`
         } else {
-          val = val + '.00'
+          val = (val || '0') + '.00'
         }
         return val
       }
+
+function allowedBlank(props, value) {
+  return !!(!props.required && (String(value) === ''))
+}
 
 export {
   emailPattern,
@@ -109,7 +113,7 @@ export default class TextField extends Component {
 
       return {
         pattern: (props.useEmailFormat ? emailPattern : (props.usePhoneFormat ? phonePattern : currencyPattern)),
-        validator: (ev) => regexToUse.test(ev.target.value) ? '' : badMessage
+        validator: (ev) => (allowedBlank(props, ev.target.value) || regexToUse.test(ev.target.value)) ? '' : badMessage
       }
     } else if(props.validator instanceof RegExp) {
       return {
@@ -230,11 +234,12 @@ export default class TextField extends Component {
    * @param {event} ev - synthetic change event
    */
   onBlur(ev) {
+    const value = ev.target.value
     if(this.props.useEmailFormat) {
-      ev.target.value = String(ev.target.value || '').toLowerCase()
+      ev.target.value = String(value || '').toLowerCase()
       this.onChange(ev)
     } else if(this.props.useCurrencyFormat) {
-      ev.target.value = currencyFormat(String(ev.target.value || '0'))
+      ev.target.value = allowedBlank(this.props, value) ? value : currencyFormat(String(value || '0'))
       this.onChange(ev)
     }
     if(this.props.onBlur) this.props.onBlur(ev)
