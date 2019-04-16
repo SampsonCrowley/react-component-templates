@@ -94,6 +94,7 @@ export default class TextAreaField extends Component {
     const textArea = (
       <textarea
         key={`${id}.textArea`}
+        ref="input"
         name={name}
         id={id}
         value={value}
@@ -104,9 +105,9 @@ export default class TextAreaField extends Component {
 
     return skipExtras ? textArea : (
       <Fragment>
-        <label key={`${id}.label`} htmlFor={id}>{label}</label>
+        <label key={`${id}.label`} ref="label" htmlFor={id}>{label}</label>
         { textArea }
-        <small key={`${id}.feedback`} className="form-control-focused">
+        <small key={`${id}.feedback`} ref="feedback" className="form-control-focused">
           {feedback}
         </small>
       </Fragment>

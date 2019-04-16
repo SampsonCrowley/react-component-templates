@@ -276,9 +276,9 @@ export default class TextField extends Component {
 
     return skipExtras ? input : (
       <Fragment>
-        <label key={`${id}.label`} htmlFor={id}>{label}</label>
+        <label key={`${id}.label`} ref="label" htmlFor={id}>{label}</label>
         { input }
-        <small key={`${id}.feedback`} className="form-control-focused">
+        <small key={`${id}.feedback`} ref="feedback" className="form-control-focused">
           {feedback}
         </small>
       </Fragment>
