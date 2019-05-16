@@ -5,13 +5,18 @@ import Objected from 'helpers/objected'
 
 const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$)',
       emailRegex = new RegExp(emailPattern),
-      phonePattern = '(^$|^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4})',
+      phonePattern = '(^$|^04[0-9]{2}\\s*[0-9]{3}\\s*[0-9]{3}|^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4})',
       phoneRegex = new RegExp(phonePattern),
       phoneFormat = (val) => {
-        val = `${val}`.replace(/[^0-9]/g, '')
+        val = String(val || '').replace(/[^0-9]/g, '')
         if(val.length) {
-          if(val.length > 6) val = val.slice(0, 6) + '-' + val.slice(6)
-          if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
+          if(/^04/.test(val)) {
+            if(val.length > 7) val = val.slice(0, 7) + ' ' + val.slice(7)
+            if(val.length > 4) val = val.slice(0, 4) + ' ' + val.slice(4)
+          } else {
+            if(val.length > 6) val = val.slice(0, 6) + '-' + val.slice(6)
+            if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
+          }
         }
         return val
       },
@@ -146,7 +151,7 @@ export default class TextField extends Component {
    */
   componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useCurrencyFormat, looseCasing }) {
     if(this.refs.input && (this.refs.input.type === 'email')) return;
-    if(usePhoneFormat) caretIgnore = '-'
+    if(usePhoneFormat) caretIgnore = /^04/.test(String(value || '')) ? '\\s' : '-'
     if(useCurrencyFormat) caretIgnore = '^0-9.'
 
     if (this._caretPosition && (this.props.value !== value)) {
