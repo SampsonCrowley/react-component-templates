@@ -5,17 +5,46 @@ import Objected from 'helpers/objected'
 
 const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*\\.[^@\\s;.\\/\\[\\]\\\\]+$)',
       emailRegex = new RegExp(emailPattern),
-      phonePattern = '(^$|^04[0-9]{2}\\s*[0-9]{3}\\s*[0-9]{3}|^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4})',
+      phonePattern = '(^$|^04[0-9]{2}\\s*[0-9]{3}\\s*[0-9]{3}|^[2-9][0-9]{2}-?[0-9]{3}-?[0-9]{4}|\\+.{11,})',
       phoneRegex = new RegExp(phonePattern),
-      phoneFormat = (val) => {
-        val = String(val || '').replace(/[^0-9]/g, '')
+      phoneFormat = (val, ctx) => {
+
+        if(/^\+([^1]|$)/.test(val)) {
+          val = val.replace(/[^+0-9]/g, '')
+        } else {
+          val = val.replace(/[^0-9]/g, '')
+        }
+
+
         if(val.length) {
-          if(/^04/.test(val)) {
-            if(val.length > 7) val = val.slice(0, 7) + ' ' + val.slice(7)
-            if(val.length > 4) val = val.slice(0, 4) + ' ' + val.slice(4)
-          } else {
-            if(val.length > 6) val = val.slice(0, 6) + '-' + val.slice(6)
-            if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
+          switch (true) {
+            case /^\+6/.test(val):
+
+              if(val.length > 3) {
+                if(ctx && /^\+61\s*0/.test(val) && (ctx._caretPosition || 0 > 3)) ctx._caretPosition = (ctx._caretPosition || 0) - 1
+
+                val = val.slice(0, 3)
+                  + ' '
+                  + (
+                    /^\+61/.test(val)
+                      ? phoneFormat(('0' + val.slice(3)).replace(/^0+/, '0')).replace(/^0/, '')
+                      : val.slice(3)
+                  )
+              }
+              break;
+            case /^\+/.test(val):
+              break;
+            case /^04/.test(val):
+              if(val.length > 7) val = val.slice(0, 7) + ' ' + val.slice(7)
+              if(val.length > 4) val = val.slice(0, 4) + ' ' + val.slice(4)
+              break;
+            case /^0/.test(val):
+              if(val.length > 6) val = val.slice(0, 6) + ' ' + val.slice(6)
+              if(val.length > 2) val = val.slice(0, 2) + ' ' + val.slice(2)
+              break;
+            default:
+              if(val.length > 6) val = val.slice(0, 6) + '-' + val.slice(6)
+              if(val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3)
           }
         }
         return val
@@ -55,7 +84,7 @@ export default class TextField extends Component {
   /**
    * @type {Array}
    */
-  static specialKeys = Object.freeze(["badFormatMessage", "caretIgnore", "onChange", "pattern", "looseCasing", "useEmailFormat", "usePhoneFormat", "useCurrencyFormat", "validator"])
+  static specialKeys = Object.freeze(["badFormatMessage", "caretIgnore", "onChange", "pattern", "looseCasing", "useEmailFormat", "usePhoneFormat", "usePhoneFormatOnBlur", "useCurrencyFormat", "validator"])
 
   /**
    * @type {object}
@@ -65,8 +94,10 @@ export default class TextField extends Component {
    * @property {Function} onChange - Run on input change
    * @property {String} type - Input type
    * @property {Boolean} uncontrolled - use an uncontrolled input
+   * @property {Boolean} useCurrencyFormat - Automagically format money numbers and add pattern checking
    * @property {Boolean} useEmailFormat - Strict Pattern parse email
    * @property {Boolean} usePhoneFormat - Automagically formats phone number and adds pattern checking
+   * @property {Boolean} usePhoneFormatOnBlur - Automagically formats phone number and adds pattern checking onBlur
    * @property {String} badFormatMessage - Message to add to tooltip on bad format
    * @property {String|Element} feedback - Feedback to show on Input focus
    * @property {String|Boolean|Number} value - Input value
@@ -83,8 +114,10 @@ export default class TextField extends Component {
     onChange: PropTypes.func,
     type: PropTypes.string,
     uncontrolled: PropTypes.bool,
+    useCurrencyFormat: PropTypes.bool,
     useEmailFormat: PropTypes.bool,
     usePhoneFormat: PropTypes.bool,
+    usePhoneFormatOnBlur: PropTypes.bool,
     badFormatMessage: PropTypes.string,
     looseCasing: PropTypes.oneOfType([
       PropTypes.string,
@@ -151,11 +184,12 @@ export default class TextField extends Component {
    */
   componentDidUpdate ({ value, caretIgnore, usePhoneFormat, useCurrencyFormat, looseCasing }) {
     if(this.refs.input && (this.refs.input.type === 'email')) return;
-    if(usePhoneFormat) caretIgnore = /^04/.test(String(value || '')) ? '\\s' : '-'
+    if(usePhoneFormat) caretIgnore = String(caretIgnore || '') + (/^\+/.test(String(this.props.value || '')) ? '\\s' : (/^0/.test(String(this.props.value || '')) ? '+\\s' : '+-'))
     if(useCurrencyFormat) caretIgnore = '^0-9.'
 
     if (this._caretPosition && (this.props.value !== value)) {
       let str, val, index, caretStr = caretIgnore ? `[${caretIgnore}]` : false
+
 
       str = this._rawStr.substr(0, this._caretPosition);
       val = String(this.props.value)
@@ -172,8 +206,9 @@ export default class TextField extends Component {
 
       try {
         if(str && caretStr) {
+          console.log(caretStr)
           let regex = new RegExp(caretStr, 'g'),
-              splitReg = new RegExp(str.replace(regex, '').split('').join(`(${caretStr})?`)),
+              splitReg = new RegExp(str.replace(regex, '').split('').map((v) => v.replace(/\+/, '\\+')).join(`(${caretStr})?`)),
               matches = str.match(regex) || [],
               effectiveString = String((val.match(splitReg) || [])[0]),
               effectiveMatches = (effectiveString.match(regex) || []).length
@@ -226,7 +261,7 @@ export default class TextField extends Component {
 
     this._rawStr = String(ev.target.value);
 
-    if(this.props.usePhoneFormat) ev.target.value = phoneFormat(ev.target.value)
+    if(this.props.usePhoneFormat) ev.target.value = phoneFormat(ev.target.value, this)
 
     if(this.props.onChange) this.props.onChange(ev)
     if(this.state.validator) ev.target.setCustomValidity(this.state.validator(ev))
@@ -246,7 +281,13 @@ export default class TextField extends Component {
     } else if(this.props.useCurrencyFormat) {
       ev.target.value = allowedBlank(this.props, value) ? value : currencyFormat(String(value || '0'))
       this.onChange(ev)
+    } else if (this.props.usePhoneFormatOnBlur) {
+      ev.target.value = phoneFormat(ev.target.value, this)
     }
+    //  else if(this.props.usePhoneFormat) {
+    //   ev.target.value = phoneFormat(ev.target.value)
+    //   this.onChange(ev)
+    // }
     if(this.props.onBlur) this.props.onBlur(ev)
   }
 
@@ -264,7 +305,7 @@ export default class TextField extends Component {
     } = Objected.filterKeys(this.props, this._specialKeys)
 
     if(this.state.pattern) props.pattern = this.state.pattern
-    if(this.props.useEmailFormat || this.props.useCurrencyFormat) props.onBlur = (ev) => this.onBlur(ev)
+    if(this.props.useEmailFormat || this.props.useCurrencyFormat || this.props.usePhoneFormatOnBlur) props.onBlur = (ev) => this.onBlur(ev)
 
     const input = (
       <input
