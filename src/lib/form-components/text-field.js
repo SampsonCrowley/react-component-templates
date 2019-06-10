@@ -231,7 +231,7 @@ export default class TextField extends Component {
   }
 
   setSelection(el, func) {
-    if(el.type === 'email') return;
+    if(/date|email/.test(String(el.type || ''))) return;
 
     try {
       const ogType = el.type || 'text',
