@@ -1,13 +1,43 @@
-import React, { Component, Fragment } from 'react';
-import Select from 'react-virtualized-select';
-import createFilterOptions from 'react-select-fast-filter-options';
-import 'react-select/dist/react-select.css';
-import 'react-virtualized/styles.css'
-import 'react-virtualized-select/styles.css'
-
+import React, { Component, Fragment, Children } from 'react';
+import Select from "react-select";
+import createFilterOptions from 'helpers/fast-filter'
+import { FixedSizeList as List } from "react-window";
 import Objected from 'helpers/objected'
-
 import TextField from 'form-components/text-field'
+
+const height = 35;
+
+class ClearIndicator extends Component {
+  render() {
+    console.log(this.props)
+
+    return (
+      <div></div>
+    );
+  }
+}
+
+class MenuList extends Component {
+  render() {
+    const { options, children, maxHeight, getValue } = this.props;
+    const [value] = getValue();
+    const initialOffset = options.indexOf(value) * height;
+    const childArray = Children.toArray(children)
+
+    return (
+      <List
+        height={Math.min((childArray.length || 1) * height, maxHeight)}
+        itemCount={childArray.length}
+        itemSize={height}
+        initialScrollOffset={initialOffset}
+      >
+        {
+          ({ index, style }) => <div style={style}>{childArray[index]}</div>
+        }
+      </List>
+    );
+  }
+}
 
 export default class SelectField extends Component {
   constructor(props) {
@@ -58,6 +88,15 @@ export default class SelectField extends Component {
     } else {
       filterOptions = targetedFilterOptions = fullFilterOptions
     }
+
+    console.log({
+      hotSwap,
+      filterOptions,
+      fullFilterOptions,
+      targetedFilterOptions,
+      options: mappedOptions,
+      quickFind,
+    })
 
     this.findOption((Object.isPureObject(value) ? value.value : value), false, {
       hotSwap,
@@ -117,7 +156,8 @@ export default class SelectField extends Component {
     }
   }
 
-  onChange = (value) => {
+  onChange = (value, meta) => {
+    console.log(meta)
     value = value || {}
     this.setState({
       autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || ''
@@ -141,9 +181,23 @@ export default class SelectField extends Component {
     return value
   }
 
+  get valueKey() {
+    return (this.props.filterOptions || {}).valueKey || 'value'
+  }
+
+  getOptionFromValue(value) {
+    if(!this.state.options) return null
+
+    const { autoCompleteValue, options, quickFind } = this.state
+
+    return Object.isPureObject(value)
+      ? options[quickFind[`${value[this.valueKey]}`.toUpperCase()]]
+      : options[quickFind[`${autoCompleteValue}`.toUpperCase()]] || options[quickFind[`${value}`.toUpperCase()]] || null
+  }
+
   render() {
     const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
-          { autoCompleteValue, clickedState, filterOptions, options, quickFind } = this.state
+          { autoCompleteValue, clickedState, filterOptions, options } = this.state
 
     const select = (
       !clickedState ? (
@@ -168,17 +222,21 @@ export default class SelectField extends Component {
           key={`${id}.input`}
           name={name}
           id={id}
-          value={Object.isPureObject(value) ? value.value : (options && options[quickFind[`${autoCompleteValue}`]]) || value || ''}
+          value={this.getOptionFromValue(value)}
           options={options}
-          filterOptions={filterOptions}
-          inputProps={{
+          selectProps={{
             ...props,
             autoComplete: 'nope'
           }}
+          filterOption={filterOptions}
           className='text-dark'
           onInputChange={this.onInputChange}
           onChange={this.onChange}
           onBlur={() => this.setState({clickedState: false})}
+          components={{ MenuList }}
+          clearable
+          isClearable
+          isSearchable
         />
       )
     )
