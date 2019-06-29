@@ -79,15 +79,6 @@ export default class SelectField extends Component {
       filterOptions = targetedFilterOptions = fullFilterOptions
     }
 
-    console.log({
-      hotSwap,
-      filterOptions,
-      fullFilterOptions,
-      targetedFilterOptions,
-      options: mappedOptions,
-      quickFind,
-    })
-
     this.findOption((Object.isPureObject(value) ? value.value : value), false, {
       hotSwap,
       filterOptions,
