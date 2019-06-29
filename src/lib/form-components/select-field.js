@@ -7,16 +7,6 @@ import TextField from 'form-components/text-field'
 
 const height = 35;
 
-class ClearIndicator extends Component {
-  render() {
-    console.log(this.props)
-
-    return (
-      <div></div>
-    );
-  }
-}
-
 class MenuList extends Component {
   render() {
     const { options, children, maxHeight, getValue } = this.props;
@@ -43,7 +33,7 @@ export default class SelectField extends Component {
   constructor(props) {
     super(props)
 
-    const existed = props.value && props.options && props.options[props.value]
+    const existed = props.value && props.options && props.options.find(opt => opt[props.autoCompleteKey || 'label'] === props.value || opt.value === props.value || opt.label === props.value)
 
     this.state = {
       autoCompleteValue: existed ? existed[props.autoCompleteKey || 'label'] : '',
@@ -156,11 +146,11 @@ export default class SelectField extends Component {
     }
   }
 
-  onChange = (value, meta) => {
-    console.log(meta)
+  onChange = (value, { action, ...meta }) => {
     value = value || {}
     this.setState({
-      autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || ''
+      autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || '',
+      clickedState: action !== 'select-option'
     })
     this.props.onChange(false, value)
   }
@@ -195,6 +185,12 @@ export default class SelectField extends Component {
       : options[quickFind[`${autoCompleteValue}`.toUpperCase()]] || options[quickFind[`${value}`.toUpperCase()]] || null
   }
 
+  _onTextKeyUp  = (ev) => (ev.keyCode === 9) && this._onTextClick()
+  _onTextChange = (ev) => this.setState({ autoCompleteValue: ev.target.value })
+  _onTextBlur   = () => this.findOption(this.state.autoCompleteValue, true)
+  _onTextClick  = () => this.setState({ clickedState: true }, this.updateOptions)
+  _onSelectBlur = () => this.setState({clickedState: false})
+
   render() {
     const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
           { autoCompleteValue, clickedState, filterOptions, options } = this.state
@@ -206,16 +202,16 @@ export default class SelectField extends Component {
           name={name}
           id={id}
           value={autoCompleteValue}
-          onKeyUp={(ev) => {if(ev.keyCode === 9) this.setState({clickedState: true})}}
-          onChange={(ev) => this.setState({autoCompleteValue: ev.target.value})}
-          onBlur={() => this.findOption(autoCompleteValue, true)}
-          onClick={() => this.setState({clickedState: true})}
+          onKeyUp={this._onTextKeyUp}
+          onChange={this._onTextChange}
+          onBlur={this._onTextBlur}
+          onClick={this._onTextClick}
           skipExtras
           {...viewProps}
         />
       ) : (
         <Select
-          autoFocus={clickedState}
+          autoFocus
           menuIsOpen
           openOnFocus
           defaultInputValue={autoCompleteValue}
@@ -232,7 +228,7 @@ export default class SelectField extends Component {
           className='text-dark'
           onInputChange={this.onInputChange}
           onChange={this.onChange}
-          onBlur={() => this.setState({clickedState: false})}
+          onBlur={this._onSelectBlur}
           components={{ MenuList }}
           clearable
           isClearable
