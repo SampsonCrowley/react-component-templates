@@ -1,6 +1,0 @@
-{
-  "name": "CreateStyles",
-  "version": "0.0.0",
-  "private": false,
-  "main": "./create-styles.js"
-}
