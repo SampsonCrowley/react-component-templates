@@ -251,7 +251,6 @@ module.exports = {
             options: {
               formatter: require.resolve('react-dev-utils/eslintFormatter'),
               eslintPath: require.resolve('eslint'),
-
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -285,7 +284,8 @@ module.exports = {
               ),
               presets: [
                 "@babel/preset-env",
-                "@babel/preset-react"
+                "@babel/preset-react",
+                "react-app"
               ],
               plugins: [
                 [
@@ -497,8 +497,18 @@ module.exports = {
   // CRL: add externals block since it's a library
   //  no need to ship React since it's shipped with the main app
   externals: {
-    react: 'react',
-    'react-dom': 'react-dom',
+    "focus-within":                  "focus-within",
+    "js-search":                     "js-search",
+    "load-awesome-react-components": "load-awesome-react-components",
+    "load-awesome-relative":         "load-awesome-relative",
+    "prop-types":                    "prop-types",
+    "react":                         "react",
+    "react-app-polyfill":            "react-app-polyfill",
+    "react-dom":                     "react-dom",
+    "react-router-dom":              "react-router-dom",
+    "react-select":                  "react-select",
+    "react-window":                  "react-window",
+    "whatwg-fetch":                  "whatwg-fetch",
   },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

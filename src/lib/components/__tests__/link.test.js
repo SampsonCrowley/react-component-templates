@@ -29,10 +29,14 @@ describe('Components - Link', () => {
   })
 
   it('requires a "to" prop', () => {
+    const cons = global.console
     global.console = {error: jest.fn()}
-    expect(() => createLink({children: 'Test' })).toThrow()
+
+    createLink({children: 'Test' })
     expect(console.error).toBeCalled()
+
     ReactDOM.unmountComponentAtNode(div);
+    global.console = cons
   })
 
   it('sets the "href" prop to "to"', () => {
@@ -72,10 +76,14 @@ describe('Components - Link', () => {
   })
 
   it('requires children', () => {
+    const cons = global.console
     global.console = {error: jest.fn()}
+
     createLink({to: '/'})
     expect(console.error).toBeCalled()
+
     ReactDOM.unmountComponentAtNode(div);
+    global.console = cons;
   })
 
   it('renders children', () => {
