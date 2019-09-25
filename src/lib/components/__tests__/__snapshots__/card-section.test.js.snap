@@ -17,10 +17,10 @@ exports[`Components - CardSection is snapshotable 1`] = `
     />
     
   </header>
-  <main
+  <div
     className="card-body "
   >
     Test
-  </main>
+  </div>
 </section>
 `;

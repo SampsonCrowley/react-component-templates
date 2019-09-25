@@ -15,16 +15,14 @@ class NotFoundPage extends Component {
             Page Not Found!
           </h1>
         </header>
-        <main>
-          <p>
-            Sorry, we couldn't locate the page you are looking for.
-          </p>
-          <p>
-            <Link to="/">Click Here to Return to the Home Page</Link>
-          </p>
-          <div className="clearfix form-group"></div>
-          <JellyBox />
-        </main>
+        <p>
+          Sorry, we couldn't locate the page you are looking for.
+        </p>
+        <p>
+          <Link to="/">Click Here to Return to the Home Page</Link>
+        </p>
+        <div className="clearfix form-group"></div>
+        <JellyBox />
       </section>
     );
   }

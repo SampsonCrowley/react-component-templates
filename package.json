@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "6.0.9",
+  "version": "6.0.10",
   "description": "Default React Components to use across apps",
   "main": "build/index.js",
   "scripts": {
@@ -133,7 +133,7 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
-    "testRegex": "src\\/(.+\\.|\\/)(spec|test)\\.(j|t)sx?$",
+    "testRegex": "src\\/(.*\\/)*(.+\\.|\\/)(spec|test)\\.(j|t)sx?$",
     "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "transform": {

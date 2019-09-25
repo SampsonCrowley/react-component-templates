@@ -25,10 +25,10 @@ describe('Components - CardSection', () => {
     ReactDOM.unmountComponentAtNode(div);
   })
 
-  it('renders header and main tags', () => {
+  it('renders header and div.card-body tags', () => {
     const rendered = createCardSection()
     expect(rendered.querySelector('header')).toBeTruthy()
-    expect(rendered.querySelector('main')).toBeTruthy()
+    expect(rendered.querySelector('div.card-body')).toBeTruthy()
     ReactDOM.unmountComponentAtNode(div);
   })
 
@@ -41,7 +41,7 @@ describe('Components - CardSection', () => {
   it('renders children', () => {
     expect(createCardSection({
       children: 'Test'
-    }).querySelector('main').innerHTML).toMatch(/^Test$/)
+    }).querySelector('.card-body').innerHTML).toMatch(/^Test$/)
     ReactDOM.unmountComponentAtNode(div);
   })
 

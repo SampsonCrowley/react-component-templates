@@ -34,9 +34,9 @@ export default class CardSection extends Component {
             )
           ) : '' }
         </header>
-        <main className={`card-body ${contentClassName}`} {...contentProps}>
+        <div className={`card-body ${contentClassName}`} {...contentProps}>
           {children}
-        </main>
+        </div>
       </section>
     )
   }
