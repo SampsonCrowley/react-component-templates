@@ -113,35 +113,48 @@ export default class SelectField extends Component {
     }
 
     if(changed) this.updateOptions()
+    else {
+      if(this.state.clickedState) {
+        // console.log(this.refs.selectField.focus())
+      }
+    }
   }
 
   findOption = (value, clearIfInvalid = false, additionalState = {}) => {
-    let found = (additionalState.quickFind || this.state.quickFind)[`${value}`.toUpperCase()];
+    let autoCompleteValue,
+        runChange = false,
+        found     = (additionalState.quickFind || this.state.quickFind)[`${value}`.toUpperCase()];
+
     if((found !== null) && (found !== undefined) && (found = (additionalState.options || this.state.options)[found])) {
-      this.setState({
-        ...additionalState,
-        autoCompleteValue: found[this.props.autoCompleteKey || 'label']
-      })
-      this.props.onChange(false, found)
+      autoCompleteValue = found[this.props.autoCompleteKey || 'label']
+      runChange = true
     } else if (clearIfInvalid) {
-      this.setState({
-        ...additionalState,
-        autoCompleteValue: ''
-      })
-      this.props.onChange(false, {})
+      autoCompleteValue = ''
+      runChange = true
+      found = {}
     } else {
-      this.setState({
-        ...additionalState,
-        autoCompleteValue: value || this.state.autoCompleteValue || ''
-      })
+      autoCompleteValue = value || this.state.autoCompleteValue || ''
     }
+
+    this.setState({
+      ...additionalState,
+      autoCompleteValue,
+    }, this.afterValueChange)
+    if(runChange) this.props.onChange(false, found)
   }
 
   onChange = (value, { action, ...meta }) => {
     value = value || {}
+    console.log(action, this.refs.selectField)
+    this.refs.selectField && this.refs.selectField.blur()
     this.setState({
       autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || '',
-      clickedState: action !== 'select-option'
+      clickedState: action !== 'select-option',
+      filterOptions: this.state.fullFilterOptions,
+    }, () => {
+      this.setState({
+        clickedState: action !== 'select-option',
+      }, this.afterValueChange)
     })
     this.props.onChange(false, value)
   }
@@ -160,6 +173,13 @@ export default class SelectField extends Component {
     })
 
     return value
+  }
+
+  afterValueChange = () => {
+    const value = this.getOptionFromValue(this.state.value) || {}
+    const autoCompleteValue = this.state.autoCompleteValue || value[this.props.autoCompleteKey || 'label'] || ''
+
+    this.onInputChange(autoCompleteValue)
   }
 
   get valueKey() {
@@ -181,6 +201,18 @@ export default class SelectField extends Component {
   _onTextBlur   = () => this.findOption(this.state.autoCompleteValue, true)
   _onTextClick  = () => this.setState({ clickedState: true }, this.updateOptions)
   _onSelectBlur = () => this.setState({clickedState: false})
+  _onSelectKeyDown = (ev) => {
+    if(ev.key === "Tab" || ev.which === 9) {
+      const direction = ev.shiftKey ? 'previousElementSibling' : 'nextElementSibling'
+      const nextSibling = ev.currentTarget[direction] || ev.currentTarget.parentElement[direction],
+            ogTabIndex = nextSibling.tabIndex
+      if(nextSibling) {
+        nextSibling.tabIndex = 0
+        nextSibling.focus()
+        nextSibling.tabIndex = ogTabIndex
+      }
+    }
+  }
 
   render() {
     const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
@@ -202,10 +234,11 @@ export default class SelectField extends Component {
         />
       ) : (
         <Select
+          ref="selectField"
           autoFocus
           menuIsOpen
-          openOnFocus
-          defaultInputValue={autoCompleteValue}
+          onClose={this._onSelectClose}
+          // defaultInputValue={autoCompleteValue}
           key={`${id}.input`}
           name={name}
           id={id}
@@ -220,13 +253,57 @@ export default class SelectField extends Component {
           onInputChange={this.onInputChange}
           onChange={this.onChange}
           onBlur={this._onSelectBlur}
+          onFocus={this._onSelectFocus}
           components={{ MenuList }}
           clearable
           isClearable
           isSearchable
+          onKeyDown={this._onSelectKeyDown}
         />
       )
     )
+
+    // const select = (
+    //   !clickedState ? (
+    //     <TextField
+    //       key={`${id}.input`}
+    //       name={name}
+    //       id={id}
+    //       value={autoCompleteValue}
+    //       onKeyUp={this._onTextKeyUp}
+    //       onChange={this._onTextChange}
+    //       onBlur={this._onTextBlur}
+    //       onClick={this._onTextClick}
+    //       skipExtras
+    //       {...viewProps}
+    //     />
+    //   ) : (
+    //     <Select
+    //       autoFocus
+    //       menuIsOpen
+    //       openOnFocus
+    //       defaultInputValue={autoCompleteValue}
+    //       key={`${id}.input`}
+    //       name={name}
+    //       id={id}
+    //       value={this.getOptionFromValue(value)}
+    //       options={options}
+    //       selectProps={{
+    //         ...props,
+    //         autoComplete: 'nope'
+    //       }}
+    //       filterOption={filterOptions}
+    //       className='text-dark'
+    //       onInputChange={this.onInputChange}
+    //       onChange={this.onChange}
+    //       onBlur={this._onSelectBlur}
+    //       components={{ MenuList }}
+    //       clearable
+    //       isClearable
+    //       isSearchable
+    //     />
+    //   )
+    // )
 
     return skipExtras ? select : (
       <Fragment>
