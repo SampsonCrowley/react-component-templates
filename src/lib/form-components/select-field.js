@@ -38,7 +38,8 @@ export default class SelectField extends Component {
     this.state = {
       autoCompleteValue: existed ? existed[props.autoCompleteKey || 'label'] : '',
       clickedState: false,
-      hotSwap: { length: 0 }
+      hotSwap: { length: 0 },
+      tabSelectsValue: false,
     }
   }
 
@@ -61,7 +62,8 @@ export default class SelectField extends Component {
           hotSwap = {length: 0, ...((this.props.filterOptions || {}).hotSwap || {})},
           fullFilterOptions = createFilterOptions({
             options: mappedOptions,
-            ...baseFilterOptions
+            ...baseFilterOptions,
+            name: 'fullFilterOptions',
           })
 
     let targetedFilterOptions = Objected.deepClone(baseFilterOptions),
@@ -71,7 +73,8 @@ export default class SelectField extends Component {
       targetedFilterOptions.indexes = hotSwap.indexes
       targetedFilterOptions = createFilterOptions({
         options: mappedOptions,
-        ...targetedFilterOptions
+        ...targetedFilterOptions,
+        name: 'targetedFilterOptions',
       })
 
       filterOptions = (`${this.state.autoCompleteValue || ''}`.length > hotSwap.length) ? fullFilterOptions : targetedFilterOptions
@@ -93,11 +96,11 @@ export default class SelectField extends Component {
     this.updateOptions()
   }
 
-  componentDidUpdate({ options: oldOptions = [] }){
+  componentDidUpdate({ options: oldOptions = [], value: oldValue }, { clickedState }){
     const options = this.props.options || [],
           longestLength = (options.length > oldOptions.length ? options.length : oldOptions.length);
 
-    let changed = options.length !== oldOptions.length;
+    let changed = (options.length !== oldOptions.length);
     if(!changed) {
       for(let i = 0; i < longestLength; i++) {
         if(Object.isPureObject(options[i])) {
@@ -113,11 +116,15 @@ export default class SelectField extends Component {
     }
 
     if(changed) this.updateOptions()
-    else {
-      if(this.state.clickedState) {
-        // console.log(this.refs.selectField.focus())
-      }
-    }
+    if(oldValue !== this.props.value) this.findOption(this.props.value)
+    // else {
+    //   if(this.state.clickedState && !clickedState) {
+    //     try {
+    //       const val = this.refs.selectField.state.inputValue
+    //       this.onInputChange(val || '', { action: 'synthetic' })
+    //     } catch(_) {}
+    //   }
+    // }
   }
 
   findOption = (value, clearIfInvalid = false, additionalState = {}) => {
@@ -145,22 +152,27 @@ export default class SelectField extends Component {
 
   onChange = (value, { action, ...meta }) => {
     value = value || {}
-    console.log(action, this.refs.selectField)
-    this.refs.selectField && this.refs.selectField.blur()
+    console.log(action, this.refs.selectField, this.state.tabSelectsValue)
+    if(action === 'select-option') this.refs.selectField && this.refs.selectField.blur()
     this.setState({
       autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || '',
       clickedState: action !== 'select-option',
       filterOptions: this.state.fullFilterOptions,
+      tabSelectsValue: this.state.tabSelectsValue && (action !== 'select-option')
     }, () => {
       this.setState({
         clickedState: action !== 'select-option',
+        tabSelectsValue: this.state.tabSelectsValue && (action !== 'select-option')
       }, this.afterValueChange)
     })
     this.props.onChange(false, value)
   }
 
-  onInputChange = (value) => {
-    if(!this.state.hotSwap.length) return value
+  onInputChange = (value, { action }) => {
+    // console.log(value, action)
+    if(!this.state.hotSwap.length || /input-change|synthetic/.test(action)) return value
+
+    const isSynthetic = action === 'synthetic'
 
     const {
       hotSwap = {},
@@ -168,8 +180,14 @@ export default class SelectField extends Component {
       targetedFilterOptions
     } = this.state
 
+    // if(isSynthetic) {
+    //   fullFilterOptions.resetFilter()
+    //   targetedFilterOptions.resetFilter()
+    // }
+
     this.setState({
-      filterOptions: (`${value || ''}`.length > (hotSwap.length || 0)) ? fullFilterOptions : targetedFilterOptions
+      filterOptions: (`${value || ''}`.length > (hotSwap.length || 0)) ? fullFilterOptions : targetedFilterOptions,
+      tabSelectsValue: isSynthetic ? !!this.state.tabSelectsValue : (value !== this.state.autoCompleteValue)
     })
 
     return value
@@ -179,7 +197,7 @@ export default class SelectField extends Component {
     const value = this.getOptionFromValue(this.state.value) || {}
     const autoCompleteValue = this.state.autoCompleteValue || value[this.props.autoCompleteKey || 'label'] || ''
 
-    this.onInputChange(autoCompleteValue)
+    this.onInputChange(autoCompleteValue, { action: 'synthetic' })
   }
 
   get valueKey() {
@@ -198,9 +216,9 @@ export default class SelectField extends Component {
 
   _onTextKeyUp  = (ev) => (ev.keyCode === 9) && this._onTextClick()
   _onTextChange = (ev) => this.setState({ autoCompleteValue: ev.target.value })
-  _onTextBlur   = () => this.findOption(this.state.autoCompleteValue, true)
+  _onTextBlur   = () => this.findOption(this.state.autoCompleteValue, true, { tabSelectsValue: false })
   _onTextClick  = () => this.setState({ clickedState: true }, this.updateOptions)
-  _onSelectBlur = () => this.setState({clickedState: false})
+  _onSelectBlur = () => this.setState({ clickedState: false, tabSelectsValue: false })
   _onSelectKeyDown = (ev) => {
     if(ev.key === "Tab" || ev.which === 9) {
       const direction = ev.shiftKey ? 'previousElementSibling' : 'nextElementSibling'
@@ -211,12 +229,19 @@ export default class SelectField extends Component {
         nextSibling.focus()
         nextSibling.tabIndex = ogTabIndex
       }
+    } else if(/Arrow(Down|Up)|Backspace|^[a-zA-Z]$/.test(ev.key) || [38, 40].includes(ev.which)) {
+      console.log(ev.key)
+      this.setState({ tabSelectsValue: true })
+    } else {
+      console.log(/Arrow(Down|Up)|^[a-zA-Z]$/.test(ev.key), ev.key, ev.which)
     }
   }
 
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
           { autoCompleteValue, clickedState, filterOptions, options } = this.state
+
+    const tabSelectsValue = (typeof tabSelectsValueProp === "undefined") ? this.state.tabSelectsValue : tabSelectsValueProp
 
     const select = (
       !clickedState ? (
@@ -238,8 +263,9 @@ export default class SelectField extends Component {
           autoFocus
           menuIsOpen
           onClose={this._onSelectClose}
-          // defaultInputValue={autoCompleteValue}
-          key={`${id}.input`}
+          defaultInputValue={(keepFiltered && autoCompleteValue) || undefined}
+          tabSelectsValue={!!tabSelectsValue}
+          key={`${id}.input.${(filterOptions || {}).filterName || 'default'}`}
           name={name}
           id={id}
           value={this.getOptionFromValue(value)}

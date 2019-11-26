@@ -42,6 +42,7 @@ export default class RouteParser {
       this.description = this.routeCache[fullPath].description
       this.image = this.routeCache[fullPath].image
       this.id = this.routeCache[fullPath].id
+      this.emptyFetch = !!this.emptyFetch
     } else if(this.current.resource) {
       try {
         const regex = new RegExp(this.current.path + (this.current.regex || "/(.*?)(\\/|\\?|$)")),
@@ -65,11 +66,12 @@ export default class RouteParser {
           this.description = description || ((this.emptyFetch = true) && (this.current.description || '').replace(/%RESOURCE%/, this.id))
           this.image = image || (this.current.image || '').replace(/%RESOURCE%/, this.id)
 
-          if(this.current.cache && this.title) this.routeCache[fullPath] = {
+          if(this.current.cache && this.title && (!this.emptyFetch || (this.current.cache === 'full'))) this.routeCache[fullPath] = {
             title: this.title,
             description: this.description,
             image: this.image,
             id: this.id,
+            emptyFetch: !!this.emptyFetch,
           }
         } else {
           this.title = this.current.index_title || this.current.title.replace(/%RESOURCE%/, 'Index')
@@ -80,6 +82,8 @@ export default class RouteParser {
 
       } catch (e) {
         console.log(e)
+        try { delete this.routeCache[fullPath] } catch(_) {}
+        this.emptyFetch = true
         this.title = (this.current.title || '').replace(/%RESOURCE%/, 'Not Found')
         this.description = (this.current.description || '').replace(/%RESOURCE%/, 'Not Found')
         this.image = (this.current.image || '').replace(/%RESOURCE%/, 'index')

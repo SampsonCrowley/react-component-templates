@@ -12,7 +12,8 @@ export default function createFilterOptions ({
   sanitizer,
   searchIndex,
   tokenizer,
-  valueKey = 'value'
+  valueKey = 'value',
+  name
 }) {
   const search = new Search(valueKey)
   search.searchIndex = searchIndex || new UnorderedSearchIndex()
@@ -54,11 +55,19 @@ export default function createFilterOptions ({
     }
   }
 
-  return (option, filter) => {
+  const filterOptions = (option, filter) => {
     if(!filter) return true
 
     onFilter(filter)
 
     return _mapKeys[option[valueKey]]
   }
+
+  filterOptions.indexes = indexes
+  filterOptions.search = search
+  filterOptions.filterName = name
+  filterOptions.resetFilter = () => _filter = void(0)
+  filterOptions.resetOptions = () => _filtered = options
+
+  return filterOptions
 }

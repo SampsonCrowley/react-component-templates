@@ -12,26 +12,33 @@ export default class App extends Component{
       <div>
         <Example
           onChange={(_, value) => this.setState({ value: value.value })}
-          filterOptions={{indexes: ['abbr', 'label'],hotSwap: {
-            indexes: ['abbr'],
-            length: 1
-          }}}
+          filterOptions={{
+            indexes: ['stuff', 'label'],
+            hotSwap: {
+              indexes: ['stuff'],
+              length: 1
+            }
+          }}
           value={this.state.value}
           valueKey="value"
-          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}]}
-          name="state"
-          autoComplete="shipping address-level1"
+          options={[{value: 1, stuff: 'yo', label: 'bbbbbb'}, {value: 2, stuff: 'mo', label: 'aaaaaa'}, {value: 3, stuff: 'tr', label: 'ffffffff'}]}
+          name="stuff"
+          autoComplete="off"
           viewProps={{
-            autoComplete: "shipping address-level1"
+            autoComplete: "off"
           }}
+          keepFiltered
         />
         <Example
-          onChange={(_, value) => this.setState({ value: value.value })}
-          filterOptions={{indexes: ['abbr', 'label'],hotSwap: {
-            indexes: ['abbr'],
-            length: 1
-          }}}
-          value={this.state.value}
+          onChange={(_, value) => this.setState({ value_2: value.value })}
+          filterOptions={{
+            indexes: ['abbr', 'label'],
+            hotSwap: {
+              indexes: ['abbr'],
+              length: 1
+            }
+          }}
+          value={this.state.value_2}
           valueKey="value"
           options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}]}
           name="state"
@@ -39,6 +46,26 @@ export default class App extends Component{
           viewProps={{
             autoComplete: "shipping address-level1"
           }}
+          tabSelectsValue
+        />
+        <Example
+          onChange={(_, value) => this.setState({ value_2: value.value })}
+          filterOptions={{
+            indexes: ['abbr', 'label'],
+            hotSwap: {
+              indexes: ['abbr'],
+              length: 1
+            }
+          }}
+          value={this.state.value_2}
+          valueKey="value"
+          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}]}
+          name="state"
+          autoComplete="shipping address-level1"
+          viewProps={{
+            autoComplete: "shipping address-level1"
+          }}
+          tabSelectsValue
         />
         <input type="text" name="street" autoComplete="shipping address-line1"/>
       </div>
