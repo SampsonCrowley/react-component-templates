@@ -291,6 +291,8 @@ export default class TextField extends Component {
     if(this.props.onBlur) this.props.onBlur(ev)
   }
 
+  focus = () => this.refs.input && this.refs.input.focus()
+
   render(){
     const {
       label = '',

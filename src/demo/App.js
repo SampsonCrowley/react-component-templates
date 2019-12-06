@@ -7,10 +7,18 @@ export default class App extends Component{
     super(props)
     this.state = { value: 1, value_2: 2 }
   }
+
+  testRef = (el) => this.testEl = el
+
+  componentDidMount() {
+    this.testEl.focus()
+  }
+
   render () {
     return (
       <div>
         <Example
+          ref={this.testRef}
           onChange={(_, value) => this.setState({ value: value.value })}
           filterOptions={{
             indexes: ['stuff', 'label'],

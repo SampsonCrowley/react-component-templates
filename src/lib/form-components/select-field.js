@@ -237,6 +237,8 @@ export default class SelectField extends Component {
     }
   }
 
+  focus = () => this._onTextClick()
+
   render() {
     const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
           { autoCompleteValue, clickedState, filterOptions, options } = this.state
@@ -246,6 +248,7 @@ export default class SelectField extends Component {
     const select = (
       !clickedState ? (
         <TextField
+          ref="inputField"
           key={`${id}.input`}
           name={name}
           id={id}

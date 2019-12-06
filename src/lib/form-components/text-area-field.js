@@ -76,6 +76,8 @@ export default class TextAreaField extends Component {
     this._specialKeys = this.constructor.specialKeys
   }
 
+  focus = () => this.refs.input && this.refs.input.focus()
+
   /**
    * call onChange for props
    * @type {Function}
