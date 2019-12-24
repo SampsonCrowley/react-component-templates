@@ -16,6 +16,7 @@ export default class RouteParser {
     this.image = null
     this.id = null
     this.emptyFetch = false
+    this.result = {}
 
     const root = this.routes.root
 
@@ -56,6 +57,7 @@ export default class RouteParser {
             } else {
               const result = await fetch(this.current.api + id + (this.current.format || '')),
                     resource = await result.json()
+              this.result = resource
               id = resource[this.current.method || 'title']
               description = !!this.current.direct_description && resource[this.current.description_method || 'description']
               image = !!this.current.direct_image && resource[this.current.image_method || 'image']
@@ -72,6 +74,7 @@ export default class RouteParser {
             image: this.image,
             id: this.id,
             emptyFetch: !!this.emptyFetch,
+            result: this.result || {}
           }
         } else {
           this.title = this.current.index_title || this.current.title.replace(/%RESOURCE%/, 'Index')
@@ -103,7 +106,8 @@ export default class RouteParser {
       emptyFetch: !!this.emptyFetch,
       id: this.id,
       title: this.title,
-      image: this.image
+      image: this.image,
+      result: this.result
     }
   }
 
