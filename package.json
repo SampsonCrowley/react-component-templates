@@ -1,6 +1,6 @@
 {
   "name": "react-component-templates",
-  "version": "6.1.1",
+  "version": "6.2.0",
   "description": "Default React Components to use across apps",
   "main": "build/index.js",
   "scripts": {
@@ -133,11 +133,11 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
-    "testRegex": "src\\/(.*\\/)*(.+\\.|\\/)(spec|test)\\.(j|t)sx?$",
+    "testRegex": "src\\/([^/]+\\/)*([^/]+\\.)*(spec|test)\\.(j|t)sx?$",
     "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.(j|t)sx?$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },

@@ -7,7 +7,11 @@ if (!Object.isPureObject) {
     return !!(arg && (typeof arg === 'object') && !(pure && Object.isArray(arg)))
   };
 
-  Object.isPureObject = function(arg) {
-    return Object.isObject(arg, true)
+  Object.isPureObject = function(arg, noClass = false) {
+    return Object.isObject(arg, true) && !(noClass && Object.isClass(arg))
   };
+
+  Object.isClass = function(arg) {
+    return /object (?!Array|Object)[A-Za-z]+/.test(Object.prototype.toString.call(arg))
+  }
 }

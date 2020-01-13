@@ -1,11 +1,12 @@
 export default class Objected {
-  static deepClone(obj) {
+  static deepClone(obj, pure = false) {
     if(typeof obj !== 'object') return obj
-    if(obj instanceof Array) return [...obj.map((v) => this.deepClone(v))]
+    if(obj instanceof Array) return [...obj.map((v) => this.deepClone(v, pure))]
+    if(pure && !Object.isPureObject(obj, true)) return obj
 
     const {...newObj} = obj
     for(let k in newObj) {
-      if(obj.hasOwnProperty(k) && Object.isObject(obj[k])) newObj[k] = this.deepClone(obj[k])
+      if(obj.hasOwnProperty(k) && Object.isObject(obj[k])) newObj[k] = this.deepClone(obj[k], pure)
     }
     return newObj
   }
@@ -22,7 +23,7 @@ export default class Objected {
           }
         } else if(next[k] !== prev[k]) {
           changed = true
-          changes[k] = next[k] || ''
+          changes[k] = Objected.deepClone(next[k] || '', true)
         }
       }
     }
