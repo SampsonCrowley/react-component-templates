@@ -41,6 +41,7 @@ export default class SelectField extends Component {
       hotSwap: { length: 0 },
       tabSelectsValue: false,
     }
+    this.tabFixId = `${Math.random()}.${+(new Date())}.tabfix`
   }
 
   updateOptions = () => {
@@ -221,14 +222,8 @@ export default class SelectField extends Component {
   _onSelectBlur = () => this.setState({ clickedState: false, tabSelectsValue: false })
   _onSelectKeyDown = (ev) => {
     if(ev.key === "Tab" || ev.which === 9) {
-      const direction = ev.shiftKey ? 'previousElementSibling' : 'nextElementSibling'
-      const nextSibling = ev.currentTarget[direction] || ev.currentTarget.parentElement[direction],
-            ogTabIndex = nextSibling.tabIndex
-      if(nextSibling) {
-        nextSibling.tabIndex = 0
-        nextSibling.focus()
-        nextSibling.tabIndex = ogTabIndex
-      }
+      console.log(this.tabFixId)
+      if(!ev.shiftKey) document.getElementById(this.tabFixId).focus()
     } else if(/Arrow(Down|Up)|Backspace|^[a-zA-Z]$/.test(ev.key) || [38, 40].includes(ev.which)) {
       console.log(ev.key)
       this.setState({ tabSelectsValue: true })
@@ -343,6 +338,7 @@ export default class SelectField extends Component {
         <small key={`${id}.feedback`} className="form-control-focused">
           {feedback}
         </small>
+        <span id={this.tabFixId} tabIndex="0"></span>
       </Fragment>
     )
   }
