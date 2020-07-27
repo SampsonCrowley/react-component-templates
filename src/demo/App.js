@@ -59,6 +59,7 @@ export default class App extends Component{
           tabSelectsValue
         />
         <Example
+          id="state_2"
           onChange={(_, value) => this.setState({ value_2: value.value })}
           filterOptions={{
             indexes: ['abbr', 'label'],
