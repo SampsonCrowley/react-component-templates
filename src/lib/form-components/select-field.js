@@ -5,7 +5,13 @@ import Objected from 'helpers/objected'
 import TextField from 'form-components/text-field'
 import MenuList from 'form-components/menu-list'
 
-const invisibleStyle = { visibility: '', height: 0, width: 0, display: 'block', border: 'none', boxShadow: 0 }
+const invisibleStyle = { visibility: '', height: 0, width: 0, display: 'block', border: 'none', boxShadow: 0 },
+      leftRightPadded = (given) => ({ ...given, padding: `0 ${parseInt(given.padding || 8) || 8}px` }),
+      customStyles = {
+        clearIndicator: leftRightPadded,
+        dropdownIndicator: leftRightPadded,
+        control: (given) => ({ ...given, minHeight: null })
+      }
 
 export default class SelectField extends Component {
   get hotSwap() {
@@ -317,6 +323,7 @@ export default class SelectField extends Component {
         isSearchable
         blurInputOnSelect
         onKeyDown={this._onSelectKeyDown}
+        styles={customStyles}
       />
     </Fragment>
 
