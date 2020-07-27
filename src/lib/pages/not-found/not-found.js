@@ -15,7 +15,7 @@ class NotFoundPage extends Component {
             Page Not Found!
           </h1>
         </header>
-        <p>
+        <p className="page-missing-notice">
           Sorry, we couldn't locate the page you are looking for.
         </p>
         <p>

@@ -28,8 +28,8 @@ const env = getClientEnvironment(publicUrl);
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
-const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
+const sassRegex = /\.s[ac]ss$/;
+const sassModuleRegex = /\.module\.s[ac]ss$/;
 
 // common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {

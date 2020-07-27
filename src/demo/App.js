@@ -17,6 +17,8 @@ export default class App extends Component{
   render () {
     return (
       <div>
+        <input type="text" name="street" autoComplete="shipping address-line1"/>
+        <input type="text" name="city" autoComplete="shipping address-level2"/>
         <Example
           ref={this.testRef}
           onChange={(_, value) => this.setState({ value: value.value })}
@@ -48,7 +50,7 @@ export default class App extends Component{
           }}
           value={this.state.value_2}
           valueKey="value"
-          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}]}
+          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}, {value: 4, abbr: 'MT', label: 'Montana'}]}
           name="state"
           autoComplete="shipping address-level1"
           viewProps={{
@@ -67,15 +69,14 @@ export default class App extends Component{
           }}
           value={this.state.value_2}
           valueKey="value"
-          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}]}
+          options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}, {value: 4, abbr: 'MT', label: 'Montana'}]}
           name="state"
-          autoComplete="shipping address-level1"
           viewProps={{
             autoComplete: "shipping address-level1"
           }}
           tabSelectsValue
         />
-        <input type="text" name="street" autoComplete="shipping address-line1"/>
+
       </div>
     )
   }

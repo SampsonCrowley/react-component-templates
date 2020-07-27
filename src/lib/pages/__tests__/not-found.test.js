@@ -1,22 +1,20 @@
-import 'polyfills'
+import 'polyfills';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import NotFound from '../not-found';
+import { NotFoundPage as NotFound } from 'pages';
 
 describe('Pages - NotFound', () => {
   const div = document.createElement('div');
 
   const createNotFound = ({...props}) => {
-    ReactDOM.render( NotFound , div);
-
-    // ReactDOM.render((
-    //   <Router>
-    //     <NotFound {...props} />
-    //   </Router>
-    // ), div);
+    ReactDOM.render((
+      <Router>
+        <NotFound {...props} />
+      </Router>
+    ), div);
     return div.querySelector('section')
   }
 
@@ -37,7 +35,7 @@ describe('Pages - NotFound', () => {
 
   it('appologises for their mistake', () => {
     const rendered = createNotFound()
-    const paragraph = rendered.querySelector('main > p:first-child')
+    const paragraph = rendered.querySelector('p.page-missing-notice')
     expect(paragraph).toBeTruthy()
     expect(paragraph.innerHTML)
       .toBe("Sorry, we couldn't locate the page you are looking for.")
@@ -54,14 +52,14 @@ describe('Pages - NotFound', () => {
     ReactDOM.unmountComponentAtNode(div);
   })
 
-  // it('is snapshotable', () => {
-  //   const tree = renderer
-  //     .create(
-  //       <Router>
-  //         <NotFound />
-  //       </Router>
-  //     )
-  //     .toJSON();
-  //   expect(tree).toMatchSnapshot()
-  // })
+  it('is snapshotable', () => {
+    const tree = renderer
+      .create(
+        <Router>
+          <NotFound />
+        </Router>
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot()
+  })
 })
