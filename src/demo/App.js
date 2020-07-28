@@ -37,6 +37,7 @@ export default class App extends Component{
           viewProps={{
             autoComplete: "off"
           }}
+          styleProps={{ clearIndicator: (given) => ({ ...given, height: "100px" })}}
           keepFiltered
         />
         <Example
@@ -68,6 +69,7 @@ export default class App extends Component{
               length: 1
             }
           }}
+          styleProps={{buttonPadding: "12" }}
           value={this.state.value_2}
           valueKey="value"
           options={[{value: 1, abbr: 'yo', label: 'asdf'}, {value: 2, abbr: 'mo', label: 'test'}, {value: 3, abbr: 'UT', label: 'Utah'}, {value: 4, abbr: 'MT', label: 'Montana'}]}

@@ -5,12 +5,28 @@ import Objected from 'helpers/objected'
 import TextField from 'form-components/text-field'
 import MenuList from 'form-components/menu-list'
 
-const invisibleStyle = { visibility: '', height: 0, width: 0, padding: 0, margin: 0, display: 'block', border: 'none', boxShadow: 0 },
-      leftRightPadded = (given) => ({ ...given, padding: `0 ${parseInt(given.padding || 8) || 8}px` }),
+const invisibleStyle = { visibility: '', height: 0, width: 0, padding: 0, margin: 0, display: 'block', border: 'none', boxShadow: 0, overflow: "hidden" },
+      leftRightPadded = (given, { selectProps: { buttonPadding } }) => ({ ...given, padding: `0 ${parseInt(buttonPadding || 0) || 4}px` }),
       customStyles = {
-        clearIndicator: leftRightPadded,
-        dropdownIndicator: leftRightPadded,
-        control: (given) => ({ ...given, minHeight: null })
+        // indicatorSeparator : (given, { hasValue, selectProps: { menuIsOpen } }) => {
+        //   if(menuIsOpen || !hasValue) return invisibleStyle
+        //   else return given
+        // },
+        clearIndicator: (given, state) => {
+          const { selectProps: { clearIndicator } } = state
+          if(clearIndicator) return clearIndicator(given, state)
+          else return leftRightPadded(given, state)
+        },
+        dropdownIndicator: (given, state) => {
+          const { selectProps: { dropdownIndicator } } = state
+          if(dropdownIndicator) return dropdownIndicator(given, state)
+          else return leftRightPadded(given, state)
+        },
+        control: (given, state) => {
+          const { selectProps: { control } } = state
+          if(control) return control(given, state)
+          else return { ...given, minHeight: null }
+        }
       }
 
 export default class SelectField extends Component {
@@ -26,6 +42,12 @@ export default class SelectField extends Component {
   get currentValue(){
     const value = this.props.value
     return (Object.isPureObject(value) ? value.value : value)
+  }
+
+  get preventFocus() {
+    const v = this._preventFocus
+    this._preventFocus = false
+    return v
   }
 
   constructor(props) {
@@ -119,7 +141,7 @@ export default class SelectField extends Component {
     }
 
     if(changed) this.updateOptions()
-    else if(oldValue !== this.props.value) this.findOption(this.props.value, false)
+    else if(oldValue !== this.props.value) this.findOption(this.props.value, !this.state.clickedState)
   }
 
   findOption = (value, clearIfInvalid = false, additionalState = {}) => {
@@ -146,20 +168,35 @@ export default class SelectField extends Component {
   }
 
   onChange = (value, { action, ...meta }) => {
+    clearTimeout(this._backspaceCalled)
+    this._backspaceCalled = false
+    let clickedState = action !== 'select-option'
     value = value || {}
-    if(action === 'select-option') this.selectField && this.selectField.blur()
-    this.setState(
-      {
-        autoCompleteValue: '',
-        clickedState: action !== 'select-option',
-        filterOptions: this.state.fullFilterOptions,
-        tabSelectsValue: this.state.tabSelectsValue && (action !== 'select-option')
-      },
-      () =>
-        this.setState({
-          autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || ''
-        }, this.afterValueChange)
-    )
+    if(action === "select-option") this.runFocusAfter()
+    if(action === 'clear' && !this.state.clickedState) {
+      this._preventFocus = true
+      // this.setState({
+      //   autoCompleteValue: '',
+      //   filterOptions: this.state.fullFilterOptions,
+      // }, () => {
+      //   this._onSelectBlur()
+      //   setTimeout(this.runFocusAfter)
+      // })
+    } else {
+      this._backspaceCalled = setTimeout(() => this._backspaceCalled = false)
+      this.setState(
+        {
+          autoCompleteValue: '',
+          clickedState,
+          filterOptions: this.state.fullFilterOptions,
+          tabSelectsValue: this.state.tabSelectsValue && (action !== 'select-option')
+        },
+        () =>
+          this.setState({
+            autoCompleteValue: value[this.props.autoCompleteKey || 'label'] || ''
+          }, this.afterValueChange)
+      )
+    }
     this.props.onChange(false, value)
   }
 
@@ -197,7 +234,7 @@ export default class SelectField extends Component {
     const { autoCompleteValue, options, quickFind } = this.state
 
     return Object.isPureObject(value)
-      ? options[quickFind[`${value[this.valueKey]}`.toUpperCase()]]
+      ? options[quickFind[`${value[this.valueKey]}`.toUpperCase()]] || null
       : options[quickFind[`${autoCompleteValue}`.toUpperCase()]] || options[quickFind[`${value}`.toUpperCase()]] || null
   }
 
@@ -213,29 +250,27 @@ export default class SelectField extends Component {
   _onTextClick  = () => this.setState({ clickedState: true }, this.updateOptions)
   _onSelectBlur = () => {
     const fromBS = this._backspaceCalled
+    clearTimeout(this._backspaceCalled)
     this._backspaceCalled = false
     setTimeout(() => {
       if(this._isMounted) {
         const value = this.getOptionFromValue(this.props.value) || {},
               newState = {
-                autoCompleteValue: value && value[this.props.autoCompleteKey || 'label']
+                autoCompleteValue: (value && value[this.props.autoCompleteKey || 'label']) || ''
               }
         if(!fromBS) {
           newState.clickedState = false
           newState.tabSelectsValue = false
-        }
-        else this.selectField.focus()
+        } else this.selectField.focus()
         this.setState(newState)
       }
     })
   }
-  _onSelectFocus = () => this.setState({ clickedState: true }, this.updateOptions)
+  _onSelectFocus = () => this.preventFocus ? setTimeout(this.runFocusAfter) : this.setState({ clickedState: true }, this.updateOptions)
   _onSelectKeyDown = (ev) => {
-    if(this._backspaceCalled) {
-      clearTimeout(this._backspaceCalled)
-      this._backspaceCalled = false
-    }
-    if(ev.key === "Backspace") this._backspaceCalled = setTimeout(() => this._backspaceCalled = false)
+    // clearTimeout(this._backspaceCalled)
+    // this._backspaceCalled = false
+    // if(ev.key === "Backspace") this._backspaceCalled = setTimeout(() => this._backspaceCalled = false)
     if(ev.key === "Tab" || ev.which === 9) {
       this.setState({ clickedState: false })
       // const input = ev.currentTarget
@@ -250,7 +285,6 @@ export default class SelectField extends Component {
         this._onSelectBlur()
         setTimeout(this.runFocusAfter)
       })
-
     } else if(ev.key === "Enter" || ev.which === 13) {
       this.setState({ autoCompleteValue: this.selectField.select.inputRef.value })
       setTimeout(this.runFocusAfter)
@@ -269,7 +303,7 @@ export default class SelectField extends Component {
   focusAfterRef = (el) => this.focusAfter = el
 
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, styleProps = {}, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
           { autoCompleteValue, clickedState, filterOptions, options } = this.state,
           tabSelectsValue = !!((typeof tabSelectsValueProp === "undefined") ? this.state.tabSelectsValue : tabSelectsValueProp)
 
@@ -307,10 +341,7 @@ export default class SelectField extends Component {
         id={`${id}.select`}
         value={this.getOptionFromValue(value)}
         options={options}
-        selectProps={{
-          ...props,
-          autoComplete: viewProps.autoComplete || 'nope'
-        }}
+        selectProps={props}
         filterOption={filterOptions}
         className='text-dark'
         onInputChange={this.onInputChange}
@@ -318,12 +349,12 @@ export default class SelectField extends Component {
         onBlur={this._onSelectBlur}
         onFocus={this._onSelectFocus}
         components={{ MenuList }}
-        clearable
         isClearable
         isSearchable
-        blurInputOnSelect
+        blurInputOnSelect={false}
         onKeyDown={this._onSelectKeyDown}
         styles={customStyles}
+        {...(styleProps || {})}
       />
     </Fragment>
 
