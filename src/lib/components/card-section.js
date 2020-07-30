@@ -5,19 +5,20 @@ export default class CardSection extends Component {
     const {
             label = '', subLabel = '', className = '', children = '',
             contentProps: cProps = {}, headerProps: hProps = {},
+            wrapperRef, headerRef, labelRef, bodyRef,
             ...props
           } = this.props,
           { className: headerClassName = '', ...headerProps } = hProps,
           { className: contentClassName = '', ...contentProps } = cProps
 
     return (
-      <section className={`card text-default ${className}`} {...props}>
-        <header className={`text-center card-header ${headerClassName}`} {...headerProps}>
+      <section ref={wrapperRef} className={`card text-default ${className}`} {...props}>
+        <header ref={headerRef} className={`text-center card-header ${headerClassName}`} {...headerProps}>
           {
             (typeof label === 'string') ? (
-              <h3 dangerouslySetInnerHTML={{__html: label}} />
+              <h3 dangerouslySetInnerHTML={{__html: label}} ref={labelRef} />
             ) : (
-              <h3>
+              <h3 ref={labelRef}>
                 {label}
               </h3>
             )
@@ -34,7 +35,7 @@ export default class CardSection extends Component {
             )
           ) : '' }
         </header>
-        <div className={`card-body ${contentClassName}`} {...contentProps}>
+        <div ref={bodyRef} className={`card-body ${contentClassName}`} {...contentProps}>
           {children}
         </div>
       </section>

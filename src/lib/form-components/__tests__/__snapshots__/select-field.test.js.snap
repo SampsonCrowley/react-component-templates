@@ -24,6 +24,9 @@ Array [
         "boxShadow": 0,
         "display": "block",
         "height": 0,
+        "margin": 0,
+        "overflow": "hidden",
+        "padding": 0,
         "visibility": "",
         "width": 0,
       }
@@ -38,7 +41,7 @@ Array [
     onKeyDown={[Function]}
   >
     <div
-      className=" css-yk16xz-control"
+      className=" css-dx63cn-control"
       onMouseDown={[Function]}
       onTouchEnd={[Function]}
     >
@@ -116,7 +119,7 @@ Array [
         />
         <div
           aria-hidden="true"
-          className=" css-tlfecz-indicatorContainer"
+          className=" css-69hb6j-indicatorContainer"
           onMouseDown={[Function]}
           onTouchEnd={[Function]}
         >
