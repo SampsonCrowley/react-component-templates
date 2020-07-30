@@ -303,7 +303,7 @@ export default class SelectField extends Component {
   focusAfterRef = (el) => this.focusAfter = el
 
   render() {
-    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, styleProps = {}, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
+    const {label = '', name, id = name, feedback = '', value, viewProps = {}, skipExtras = false, readOnly = false, tabSelectsValue: tabSelectsValueProp, keepFiltered = false, styleProps = {}, ...props} = Objected.filterKeys(this.props, ['autoCompleteKey', 'onChange', 'validator', 'caretIgnore', 'options', 'filterOptions']),
           { autoCompleteValue, clickedState, filterOptions, options } = this.state,
           tabSelectsValue = !!((typeof tabSelectsValueProp === "undefined") ? this.state.tabSelectsValue : tabSelectsValueProp)
 
@@ -324,11 +324,12 @@ export default class SelectField extends Component {
         style={invisibleStyle}
         autoComplete={viewProps.autoComplete || 'off'}
         tabIndex={-1}
+        readOnly={!!readOnly}
       />
       <Select
         ref={this.selectFieldRef}
         // menuIsOpen
-        menuIsOpen={!!clickedState}
+        menuIsOpen={!readOnly && !!clickedState}
         onClose={this._onSelectClose}
         // {...(
         //   clickedState
@@ -349,8 +350,8 @@ export default class SelectField extends Component {
         onBlur={this._onSelectBlur}
         onFocus={this._onSelectFocus}
         components={{ MenuList }}
-        isClearable
-        isSearchable
+        isClearable={!readOnly}
+        isSearchable={!readOnly}
         blurInputOnSelect={false}
         onKeyDown={this._onSelectKeyDown}
         styles={customStyles}
