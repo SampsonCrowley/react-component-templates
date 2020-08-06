@@ -27,7 +27,10 @@ const invisibleStyle = { visibility: '', height: 0, width: 0, padding: 0, margin
           if(control) return control(given, state)
           else return { ...given, minHeight: null }
         }
-      }
+      },
+      outerStyle = `
+        input[id^="react-select-"] { opacity: 1 !important; }
+      `.replace(/\s+/g, '')
 
 export default class SelectField extends Component {
   get hotSwap() {
@@ -308,7 +311,7 @@ export default class SelectField extends Component {
           tabSelectsValue = !!((typeof tabSelectsValueProp === "undefined") ? this.state.tabSelectsValue : tabSelectsValueProp)
 
     const select = <Fragment>
-      <style>{`input[id^="react-select-"] { opacity: 1 !important; }`}</style>
+      <style>{outerStyle}</style>
       <TextField
         ref={this.inputFieldRef}
         key={`${id}.input`}
@@ -359,7 +362,20 @@ export default class SelectField extends Component {
       />
     </Fragment>
 
-    return skipExtras ? select : (
+
+    const focusEl = <span
+      class="select-field-focus-el"
+      key={`${id}.focus`}
+      ref={this.focusAfterRef}
+      tabIndex="0"
+    />
+
+    return skipExtras ? (
+      <Fragment>
+        { select }
+        { focusEl }
+      </Fragment>
+    ) : (
       <Fragment>
         <label key={`${id}.label`} htmlFor={id}>{label}</label>
         {
@@ -368,7 +384,7 @@ export default class SelectField extends Component {
         <small key={`${id}.feedback`} className="form-control-focused">
           {feedback}
         </small>
-        <span ref={this.focusAfterRef} tabIndex="0"></span>
+        { focusEl }
       </Fragment>
     )
   }
