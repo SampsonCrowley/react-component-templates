@@ -12,7 +12,7 @@ const emailPattern = '(^$|^[^@\\s;.\\/\\[\\]\\\\]+(\\.[^@\\s;.\\/\\[\\]\\\\]+)*@
         if(/^\+([^1]|$)/.test(val)) {
           val = val.replace(/[^+0-9]/g, '')
         } else {
-          val = val.replace(/[^0-9]/g, '')
+          val = val.replace(/^\+?1|[^0-9]/g, '')
         }
 
 
